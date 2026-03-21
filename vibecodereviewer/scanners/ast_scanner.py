@@ -1,5 +1,5 @@
 """
-CodeSentinel — AST-Based Python Scanner
+VibeCodeReviewer — AST-Based Python Scanner
 Uses Python's ast module for semantic analysis rather than pure regex.
 
 Detects:

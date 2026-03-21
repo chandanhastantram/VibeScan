@@ -1,15 +1,15 @@
 """
-CodeSentinel — Suppression Handler
+VibeCodeReviewer — Suppression Handler
 Reads inline suppression comments and removes matching findings.
 
 Supported formats (case-insensitive):
   # nosec
   # nosec: SQL Injection
-  # codesentinel: ignore
-  # codesentinel: ignore SQL Injection, Hardcoded Password
+  # vibecodereviewer: ignore
+  # vibecodereviewer: ignore SQL Injection, Hardcoded Password
   # noqa (generic, suppresses all findings on the line)
   // nosec                  (JS/TS/Java/Go)
-  // codesentinel: ignore   (JS/TS/Java/Go)
+  // vibecodereviewer: ignore   (JS/TS/Java/Go)
 """
 
 import re
@@ -17,7 +17,7 @@ from .models import Finding
 
 # Matches any suppression annotation on a line
 _SUPPRESSION_RE = re.compile(
-    r"(?:#|//)\s*(?:nosec|noqa|codesentinel\s*:\s*ignore)(?:\s*:?\s*(.+))?$",
+    r"(?:#|//)\s*(?:nosec|noqa|vibecodereviewer\s*:\s*ignore)(?:\s*:?\s*(.+))?$",
     re.IGNORECASE,
 )
 

@@ -1,5 +1,5 @@
 """
-CodeSentinel — Live CVE / OSV Database Integration
+VibeCodeReviewer — Live CVE / OSV Database Integration
 Queries the Open Source Vulnerabilities API (api.osv.dev) for real-time
 vulnerability data, with transparent fallback to the bundled offline database.
 
@@ -14,7 +14,7 @@ from .scanners.dependencies import VULN_DB, _version_lte, _SEVERITY_MAP
 from .models import Finding, Severity
 
 OSV_API_URL = "https://api.osv.dev/v1/query"
-_CACHE_FILE  = os.path.join(os.path.expanduser("~"), ".codesentinel_osv_cache.json")
+_CACHE_FILE  = os.path.join(os.path.expanduser("~"), ".vibecodereviewer_osv_cache.json")
 _CACHE_TTL   = 86_400  # 24 hours
 
 

@@ -1,6 +1,6 @@
 """
 sample_vulnerable/app.py
-A deliberately vulnerable Flask application for testing CodeSentinel.
+A deliberately vulnerable Flask application for testing VibeCodeReviewer.
 DO NOT deploy this. It contains intentional security flaws.
 """
 

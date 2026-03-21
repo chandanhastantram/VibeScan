@@ -1,5 +1,5 @@
 """
-CodeSentinel — Path Traversal Scanner
+VibeCodeReviewer — Path Traversal Scanner
 Detects user-controlled paths passed to file system operations without validation.
 """
 

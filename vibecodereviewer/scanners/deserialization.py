@@ -1,5 +1,5 @@
 """
-CodeSentinel — Insecure Deserialization Scanner
+VibeCodeReviewer — Insecure Deserialization Scanner
 Detects unsafe use of pickle, yaml.load, marshal, and shelve with untrusted data.
 """
 

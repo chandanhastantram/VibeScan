@@ -1,13 +1,13 @@
 """
-CodeSentinel — Baseline Manager
+VibeCodeReviewer — Baseline Manager
 Saves a scan result as a JSON baseline and computes the diff on subsequent runs.
 
 Usage:
   # First run — establish baseline
-  codesentinel scan . --save-baseline baseline.json
+  vibecodereviewer scan . --save-baseline baseline.json
 
   # Subsequent runs — only report new findings
-  codesentinel scan . --baseline baseline.json
+  vibecodereviewer scan . --baseline baseline.json
 
 How it works:
   A finding is considered "seen before" if a baseline entry matches on

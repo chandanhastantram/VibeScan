@@ -1,5 +1,5 @@
 """
-CodeSentinel — Command Injection Scanner
+VibeCodeReviewer — Command Injection Scanner
 Detects dangerous shell execution patterns: os.system, subprocess with shell=True,
 eval(), exec(), and similar code execution sinks that may receive user input.
 """

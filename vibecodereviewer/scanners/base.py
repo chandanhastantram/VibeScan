@@ -1,5 +1,5 @@
 """
-CodeSentinel — Base Scanner
+VibeCodeReviewer — Base Scanner
 Abstract base class that all scanners inherit from.
 """
 

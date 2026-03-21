@@ -1,5 +1,5 @@
 """
-CodeSentinel — Hardcoded Secrets Scanner
+VibeCodeReviewer — Hardcoded Secrets Scanner
 Detects API keys, tokens, passwords, and credentials embedded in source code.
 Covers 80+ known secret patterns across major cloud providers, services, and generic formats.
 """

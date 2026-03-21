@@ -1,5 +1,5 @@
 """
-CodeSentinel — SQL Injection Scanner
+VibeCodeReviewer — SQL Injection Scanner
 Detects SQL injection vectors: string concatenation, f-strings, and
 .format() calls being passed to database execute() methods.
 """

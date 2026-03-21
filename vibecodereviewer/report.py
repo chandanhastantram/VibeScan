@@ -1,5 +1,5 @@
 """
-CodeSentinel — Report Generator
+VibeCodeReviewer — Report Generator
 Produces rich Markdown and JSON reports from a ScanResult.
 """
 
@@ -26,7 +26,7 @@ def generate_markdown(result: ScanResult) -> str:
 
     # ── Header ────────────────────────────────────────────────────────────────
     lines += [
-        "# 🛡️ CodeSentinel Security Report",
+        "# 🛡️ VibeCodeReviewer Security Report",
         "",
         f"**Generated:** {now}  ",
         f"**Target:** `{result.target_path}`  ",

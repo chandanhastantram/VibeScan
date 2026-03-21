@@ -1,5 +1,5 @@
 """
-CodeSentinel — CLI Entry Point (v2)
+VibeCodeReviewer — CLI Entry Point (v2)
 All new flags: --sarif, --baseline, --save-baseline, --plugins, --live-cve, --workers
 """
 
@@ -36,7 +36,7 @@ GRAY   = "\033[90m"  if _USE_COLOR else ""
 
 BANNER = f"""{RED}{BOLD}
   ================================================================
-   CodeSentinel  --  Autonomous Security Vulnerability Scanner
+   VibeCodeReviewer  --  Autonomous Security Vulnerability Scanner
    v2.0.0
   ================================================================
 {RESET}"""
@@ -170,8 +170,8 @@ def cmd_list_plugins(args) -> int:
 
 def main():
     parser = argparse.ArgumentParser(
-        prog="codesentinel",
-        description="CodeSentinel v2 — Autonomous Security Vulnerability Scanner",
+        prog="vibecodereviewer",
+        description="VibeCodeReviewer v2 — Autonomous Security Vulnerability Scanner",
     )
     subparsers = parser.add_subparsers(dest="command")
 

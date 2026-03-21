@@ -1,5 +1,5 @@
 """
-CodeSentinel - Data Models
+VibeCodeReviewer - Data Models
 Defines the core data structures used across the scanner.
 """
 

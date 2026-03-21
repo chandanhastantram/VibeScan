@@ -1,5 +1,5 @@
 """
-CodeSentinel — Dependency Vulnerability Scanner
+VibeCodeReviewer — Dependency Vulnerability Scanner
 Parses requirements.txt and package.json for known vulnerable package versions.
 Uses a bundled vulnerability database (CVE/GHSA data, updated regularly).
 

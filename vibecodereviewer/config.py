@@ -1,6 +1,6 @@
 """
-CodeSentinel — Config Loader
-Loads .codesentinel.yml from the target directory (optional).
+VibeCodeReviewer — Config Loader
+Loads .vibecodereviewer.yml from the target directory (optional).
 """
 
 import os
@@ -49,11 +49,11 @@ class ScanConfig:
 
 def load_config(target_path: str) -> ScanConfig:
     """
-    Try to load .codesentinel.yml from target_path.
+    Try to load .vibecodereviewer.yml from target_path.
     Falls back to defaults if not found or yaml not installed.
     """
     config = ScanConfig()
-    config_file = os.path.join(target_path, ".codesentinel.yml")
+    config_file = os.path.join(target_path, ".vibecodereviewer.yml")
 
     if not _YAML_AVAILABLE or not os.path.isfile(config_file):
         return config

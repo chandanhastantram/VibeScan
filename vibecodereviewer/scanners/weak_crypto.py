@@ -1,5 +1,5 @@
 """
-CodeSentinel — Weak Cryptography Scanner
+VibeCodeReviewer — Weak Cryptography Scanner
 Detects use of broken or weak cryptographic algorithms, insecure modes,
 and small key sizes that do not meet modern security standards.
 """
