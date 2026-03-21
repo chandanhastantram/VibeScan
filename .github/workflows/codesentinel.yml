@@ -1,0 +1,98 @@
+name: CodeSentinel Security Scan
+
+on:
+  push:
+    branches: [ main, master, develop ]
+  pull_request:
+    branches: [ main, master, develop ]
+
+# Grant read access for checkout + write access to upload SARIF to Code Scanning
+permissions:
+  contents: read
+  security-events: write
+  actions: read
+
+jobs:
+  codesentinel:
+    name: Security Vulnerability Scan
+    runs-on: ubuntu-latest
+
+    steps:
+      # ── 1. Checkout the code ───────────────────────────────────────────────
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # ── 2. Set up Python ───────────────────────────────────────────────────
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      # ── 3. Install CodeSentinel ────────────────────────────────────────────
+      - name: Install CodeSentinel
+        run: |
+          pip install colorama pyyaml
+          # If CodeSentinel is published to PyPI, use: pip install codesentinel
+          # For now, install from the bundled copy:
+          pip install -e .
+
+      # ── 4. Restore baseline (optional — skip on first run) ─────────────────
+      - name: Restore scan baseline
+        uses: actions/cache@v4
+        with:
+          path: .codesentinel_baseline.json
+          key: codesentinel-baseline-${{ github.ref_name }}
+          restore-keys: |
+            codesentinel-baseline-main
+            codesentinel-baseline-
+
+      # ── 5. Run the scan ────────────────────────────────────────────────────
+      - name: Run CodeSentinel
+        id: scan
+        run: |
+          # Run with SARIF output + baseline diff (won't fail if no baseline yet)
+          python -m codesentinel.cli scan . \
+            --sarif results.sarif \
+            --output security-report.md \
+            --severity HIGH \
+            --save-baseline .codesentinel_baseline.json \
+            ${{ hashFiles('.codesentinel_baseline.json') != '' && '--baseline .codesentinel_baseline.json' || '' }}
+        # Exit code 0 = no CRITICAL findings, exit code 1 = CRITICAL found
+        # Use continue-on-error to ensure SARIF upload happens even on failure
+        continue-on-error: true
+
+      # ── 6. Upload SARIF to GitHub Code Scanning ────────────────────────────
+      - name: Upload SARIF to GitHub Code Scanning
+        uses: github/codeql-action/upload-sarif@v3
+        if: always()
+        with:
+          sarif_file: results.sarif
+          category: codesentinel
+
+      # ── 7. Upload Markdown report as artifact ─────────────────────────────
+      - name: Upload security report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: codesentinel-security-report
+          path: |
+            security-report.md
+            results.sarif
+          retention-days: 30
+
+      # ── 8. Save updated baseline ────────────────────────────────────────────
+      - name: Save baseline
+        uses: actions/cache/save@v4
+        if: github.event_name == 'push'
+        with:
+          path: .codesentinel_baseline.json
+          key: codesentinel-baseline-${{ github.ref_name }}
+
+      # ── 9. Fail the job if CRITICAL issues were found ──────────────────────
+      - name: Check scan result
+        if: steps.scan.outcome == 'failure'
+        run: |
+          echo "::error::CodeSentinel found CRITICAL security vulnerabilities."
+          echo "::error::Review the Security tab or security-report.md for details."
+          exit 1
