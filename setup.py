@@ -9,7 +9,10 @@ setup(
     install_requires=["colorama>=0.4.6", "pyyaml>=5.4"],
     python_requires=">=3.10",
     entry_points={
-        "console_scripts": ["vibecodereviewer=vibecodereviewer.cli:main"],
+        "console_scripts": [
+            "vibecodereviewer=vibecodereviewer.cli:main",
+            "codesentinel=vibecodereviewer.cli:main",
+        ],
     },
     classifiers=[
         "Programming Language :: Python :: 3",

@@ -151,7 +151,27 @@ def cmd_scan(args) -> int:
     if args.output or args.sarif:
         print()
 
+    # ── Auto-save to history DB ───────────────────────────────────────────────
+    if not getattr(args, "no_save", False):
+        try:
+            from .storage import ScanStore
+            scan_id = ScanStore().save_scan(result)
+            print(f"  {DIM}\u270e Scan saved to history (id={scan_id}). "
+                  f"Run {RESET}{CYAN}vibecodereviewer serve{RESET}{DIM} to view.{RESET}\n")
+        except Exception:
+            pass  # never let storage failure break a scan
+
     return 1 if result.critical_count > 0 else 0
+
+
+def cmd_serve(args) -> int:
+    from .serve import start_server
+    start_server(
+        port=args.port,
+        db_path=args.db or None,
+        open_browser=not args.no_browser,
+    )
+    return 0
 
 
 def cmd_list_plugins(args) -> int:
@@ -190,6 +210,17 @@ def main():
     sp.add_argument("--plugins",                help="Path to plugins directory (auto-discovered scanners)")
     sp.add_argument("--workers",    "-w",       type=int, default=8,
                     help="Number of parallel worker threads (default: 8)")
+    sp.add_argument("--no-save",                action="store_true",
+                     help="Don't save this scan to the history database")
+
+    # ── serve ─────────────────────────────────────────────────────────────────
+    srv = subparsers.add_parser("serve", help="Launch the local web dashboard")
+    srv.add_argument("--port", "-p", type=int, default=8080,
+                     help="Port to listen on (default: 8080)")
+    srv.add_argument("--db", default=None,
+                     help="Path to the SQLite history database")
+    srv.add_argument("--no-browser", action="store_true",
+                     help="Don't open a browser tab automatically")
 
     # ── list-plugins ──────────────────────────────────────────────────────────
     lp = subparsers.add_parser("list-plugins", help="List discovered plugins in a directory")
@@ -199,6 +230,8 @@ def main():
 
     if args.command == "scan":
         sys.exit(cmd_scan(args))
+    elif args.command == "serve":
+        sys.exit(cmd_serve(args))
     elif args.command == "list-plugins":
         sys.exit(cmd_list_plugins(args))
     else:
