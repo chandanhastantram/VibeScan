@@ -1,130 +1,192 @@
 # 🛡️ VibeScan
 
-**Autonomous Security Vulnerability Scanner** — scans any codebase for security bugs using static analysis and returns a rich, actionable report.
+**Autonomous Security Vulnerability Scanner** — scan any codebase for security bugs using static analysis and get a rich, actionable report. Now available on PyPI and runnable in CI/CD pipelines.
+
+[![PyPI](https://img.shields.io/badge/PyPI-chandan--vibescan-blue)](https://pypi.org/project/chandan-vibescan/)
+[![Python](https://img.shields.io/badge/python-3.10%2B-brightgreen)](https://www.python.org/)
+[![License](https://img.shields.io/badge/license-MIT-lightgrey)](LICENSE)
 
 ---
 
-## Features
+## ✨ Features
 
 | Scanner | Detects |
 |---|---|
 | 🔑 **Secrets** | 80+ patterns — AWS keys, GitHub tokens, Stripe keys, JWT secrets, private keys, DB connection strings |
 | 💉 **SQL Injection** | String concat / f-strings / `.format()` in SQL queries; ORM `raw()` calls |
 | 💻 **Command Injection** | `os.system`, `subprocess(shell=True)`, `eval()`, `exec()`, JS `child_process.exec`, PHP `system()` |
-| 🌐 **XSS** | `mark_safe()`, Jinja2 `\|safe`, `innerHTML`, `document.write`, React `dangerouslySetInnerHTML`, PHP `echo $_GET` |
+| 🌐 **XSS** | `mark_safe()`, Jinja2 `\|safe`, `innerHTML`, `document.write`, React `dangerouslySetInnerHTML` |
 | 📁 **Path Traversal** | User input in `os.path.join`, `open()`, Flask `send_file` |
-| 📦 **Insecure Deserialization** | `pickle.load`, `yaml.load` without SafeLoader, `marshal`, `shelve`, PHP `unserialize`, Java `ObjectInputStream` |
-| 🔐 **Weak Crypto** | MD5/SHA1, DES/RC4, ECB mode, small RSA keys, `random` for security, disabled SSL, hardcoded IVs |
-| 📢 **Sensitive Data Exposure** | Logging passwords, `DEBUG=True`, Flask `debug=True`, weak `SECRET_KEY`, env vars in responses |
-| 📋 **Dependencies** | Known CVEs in `requirements.txt` and `package.json` (offline, bundled DB of 16 high-impact CVEs) |
+| 📦 **Insecure Deserialization** | `pickle.load`, `yaml.load` without SafeLoader, `marshal`, `shelve`, PHP `unserialize` |
+| 🔐 **Weak Crypto** | MD5/SHA1, DES/RC4, ECB mode, small RSA keys, `random` for security, hardcoded IVs |
+| 📢 **Sensitive Data Exposure** | Logging passwords, `DEBUG=True`, Flask `debug=True`, weak `SECRET_KEY` |
+| 📋 **Dependencies** | Known CVEs in `requirements.txt` and `package.json` (live OSV API + bundled offline DB) |
+| 🧠 **AST Analysis** | Deep Python analysis via Abstract Syntax Tree — catches obfuscated patterns |
 
 ---
 
-## Installation
+## 🚀 Installation
 
 ```bash
-cd vibescan
+pip install chandan-vibescan
+```
+
+Or run directly from source:
+
+```bash
+git clone https://github.com/chandanhastantram/VibeScan.git
+cd VibeScan
 pip install -e .
 ```
 
-Or without installing (run directly):
-
-```bash
-pip install colorama pyyaml
-```
-
 ---
 
-## Usage
+## 🖥️ Usage
 
-### Basic scan (terminal output only)
-```
-python -m vibescan.cli scan /path/to/your/project
+### Scan a project
+```bash
+vibescan scan /path/to/your/project
 ```
 
 ### Generate a Markdown report
-```
-python -m vibescan.cli scan /path/to/your/project --output report.md
+```bash
+vibescan scan . --output report.md
 ```
 
-### Generate a JSON report
+### Generate an interactive HTML report
+```bash
+vibescan scan . --output report.html --format html
 ```
-python -m vibescan.cli scan /path/to/your/project --output report.json --format json
+
+### Generate a SARIF report (for GitHub Security tab)
+```bash
+vibescan scan . --output results.sarif --format sarif
 ```
 
 ### Filter by minimum severity
-```
-python -m vibescan.cli scan /path/to/your/project --severity HIGH
+```bash
+vibescan scan . --severity HIGH
 ```
 
-### Scan the included sample vulnerable project
-```
-python -m vibescan.cli scan ./sample_vulnerable --output report.md
+### Skip saving to history
+```bash
+vibescan scan . --no-save
 ```
 
 ---
 
-## Output
+## 🌐 Web Dashboard
 
-**Terminal** — Colorized, severity-tagged findings with file:line references and one-line fix previews:
+VibeScan includes a local web dashboard to browse your full scan history.
 
-```
-  [CRITICAL] Hardcoded AWS Access Key ID
-  ┌─ sample_vulnerable/app.py : line 14
-  ├─ CWE: CWE-798  •  Scanner: SecretsScanner
-  ├─ Hardcoded AWS Access Key ID detected.
-  └─ Fix: Remove from source code. Use environment variables or AWS IAM roles.
+```bash
+vibescan serve
 ```
 
-**Markdown Report** — Full report with severity tables, CWE links, code snippets, fix guidance, and a JSON summary block.
+Then open your browser to **[http://localhost:8080](http://localhost:8080)**
+
+```bash
+# Custom port
+vibescan serve --port 9000
+
+# Headless (no browser auto-open)
+vibescan serve --no-browser
+```
+
+> Scan history is saved automatically to `~/.vibescan/history.db` (SQLite).
 
 ---
 
-## Configuration (optional)
+## ⚙️ CI/CD Integration (GitHub Actions)
+
+Add VibeScan to your pipeline by creating `.github/workflows/security-scan.yml`:
+
+```yaml
+name: VibeScan Security Check
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+    - run: pip install chandan-vibescan
+    - run: vibescan scan . --severity HIGH
+```
+
+VibeScan exits with code `1` on CRITICAL findings, automatically blocking unsafe pull requests.
+
+---
+
+## 🔧 Configuration (optional)
 
 Create `.vibescan.yml` in your project root:
 
 ```yaml
-min_severity: HIGH           # Only report HIGH and CRITICAL
+min_severity: HIGH
 exclude_dirs:
   - vendor
   - migrations
   - __pycache__
-enabled_scanners:             # Leave empty to run all 9
+enabled_scanners:
   - secrets
   - sql_injection
   - command_injection
-extra_secret_patterns:        # Your own regex patterns
+extra_secret_patterns:
   - "MY_INTERNAL_TOKEN_[A-Z0-9]{20}"
 ```
 
 ---
 
-## Exit Codes
+## 🧩 Plugin System
 
-| Code | Meaning |
-|---|---|
-| `0` | Scan complete, no CRITICAL findings |
-| `1` | CRITICAL findings detected |
+Drop custom scanner plugins into a folder and auto-discover them:
 
-Use in CI/CD:
 ```bash
-python -m vibescan.cli scan . --severity HIGH || exit 1
+vibescan scan . --plugins ./my_plugins
 ```
+
+Each plugin is a Python file that subclasses `BaseScanner`. See `vibescan/plugins.py` for the API.
 
 ---
 
-## Project Structure
+## 📊 Exit Codes
+
+| Code | Meaning |
+|---|---|
+| `0` | Scan complete — no CRITICAL findings |
+| `1` | CRITICAL findings detected |
+
+---
+
+## 📁 Project Structure
 
 ```
 vibescan/
 ├── vibescan/
 │   ├── cli.py              # CLI entry point
-│   ├── engine.py           # File walker + dispatcher
+│   ├── engine.py           # Parallel file walker + dispatcher
 │   ├── config.py           # .vibescan.yml loader
 │   ├── models.py           # Finding, ScanResult, Severity
 │   ├── report.py           # Markdown + JSON report generator
+│   ├── html_report.py      # Interactive HTML report
+│   ├── sarif.py            # SARIF 2.1.0 report generator
+│   ├── storage.py          # SQLite scan history
+│   ├── serve.py            # Local web dashboard server
+│   ├── baseline.py         # Baseline & diff mode
+│   ├── suppression.py      # Inline suppression (# nosec)
+│   ├── plugins.py          # Plugin discovery system
+│   ├── osv.py              # Live CVE lookup via OSV API
 │   └── scanners/
+│       ├── ast_scanner.py
 │       ├── secrets.py
 │       ├── sql_injection.py
 │       ├── command_injection.py
