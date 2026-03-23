@@ -1,5 +1,5 @@
 """
-VibeCodeReviewer — Insecure Deserialization Scanner
+VibeScan — Insecure Deserialization Scanner
 Detects unsafe use of pickle, yaml.load, marshal, and shelve with untrusted data.
 """
 

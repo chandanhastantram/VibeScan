@@ -1,5 +1,5 @@
 """
-VibeCodeReviewer — Sensitive Data Exposure Scanner
+VibeScan — Sensitive Data Exposure Scanner
 Detects logging or printing of sensitive fields, verbose error messages,
 stack traces in API responses, and debug mode enabled in production.
 """

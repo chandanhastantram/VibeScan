@@ -1,5 +1,5 @@
 """
-VibeCodeReviewer — XSS Scanner
+VibeScan — XSS Scanner
 Detects cross-site scripting vectors in server-side template rendering,
 innerHTML assignments, and unsanitized output in HTML/JS/Python templates.
 """

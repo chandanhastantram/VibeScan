@@ -1,6 +1,6 @@
 """
-CodeSentinel — Scan History Storage
-Persists scan results to a local SQLite database (~/.codesentinel/history.db).
+VibeScan — Scan History Storage
+Persists scan results to a local SQLite database (~/.vibescan/history.db).
 Zero extra dependencies — uses only stdlib sqlite3.
 """
 
@@ -17,7 +17,7 @@ from .models import ScanResult, Finding, Severity
 # ── DB location ───────────────────────────────────────────────────────────────
 
 def default_db_path() -> str:
-    return str(Path.home() / ".codesentinel" / "history.db")
+    return str(Path.home() / ".vibescan" / "history.db")
 
 
 # ── Schema ────────────────────────────────────────────────────────────────────

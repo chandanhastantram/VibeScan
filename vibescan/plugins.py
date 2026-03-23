@@ -1,5 +1,5 @@
 """
-VibeCodeReviewer — Plugin / Custom Scanner API
+VibeScan — Plugin / Custom Scanner API
 Auto-discovers user scanners dropped into a plugins/ directory.
 
 Usage:
@@ -7,8 +7,8 @@ Usage:
      my_project/plugins/my_scanner.py
 
   2. Define a class that inherits from BaseScanner:
-     from vibecodereviewer.scanners.base import BaseScanner
-     from vibecodereviewer.models import Finding, Severity
+     from vibescan.scanners.base import BaseScanner
+     from vibescan.models import Finding, Severity
 
      class MySQLPatternScanner(BaseScanner):
          name = \"MySQLPatternScanner\"
@@ -18,10 +18,10 @@ Usage:
              # your logic here
              return []
 
-  3. Run vibecodereviewer with --plugins ./plugins
-     vibecodereviewer scan . --plugins ./plugins
+  3. Run vibescan with --plugins ./plugins
+     vibescan scan . --plugins ./plugins
 
-VibeCodeReviewer will auto-discover and register all BaseScanner subclasses
+VibeScan will auto-discover and register all BaseScanner subclasses
 found in .py files within the plugins directory.
 """
 
@@ -52,7 +52,7 @@ def discover_plugins(plugins_dir: str) -> list[BaseScanner]:
             continue
 
         filepath = os.path.join(plugins_dir, filename)
-        module_name = f"_vibecodereviewer_plugin_{filename[:-3]}"
+        module_name = f"_vibescan_plugin_{filename[:-3]}"
 
         try:
             spec   = importlib.util.spec_from_file_location(module_name, filepath)

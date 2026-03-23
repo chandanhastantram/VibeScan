@@ -1,13 +1,13 @@
 """
-VibeCodeReviewer — Baseline Manager
+VibeScan — Baseline Manager
 Saves a scan result as a JSON baseline and computes the diff on subsequent runs.
 
 Usage:
   # First run — establish baseline
-  vibecodereviewer scan . --save-baseline baseline.json
+  vibescan scan . --save-baseline baseline.json
 
   # Subsequent runs — only report new findings
-  vibecodereviewer scan . --baseline baseline.json
+  vibescan scan . --baseline baseline.json
 
 How it works:
   A finding is considered "seen before" if a baseline entry matches on

@@ -1,5 +1,5 @@
 """
-VibeCodeReviewer — HTML Report Generator
+VibeScan — HTML Report Generator
 Produces an interactive, self-contained single-file HTML report.
 Add this to report.py and extend write_report() with fmt="html".
 """
@@ -71,7 +71,7 @@ def generate_html(result: ScanResult) -> str:
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>VibeCodeReviewer Report — {os.path.basename(result.target_path)}</title>
+<title>VibeScan Report — {os.path.basename(result.target_path)}</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap');
 
@@ -243,7 +243,7 @@ def generate_html(result: ScanResult) -> str:
 
   <!-- Header -->
   <div class="header">
-    <div class="logo">🛡 VibeCodeReviewer • Security Report</div>
+    <div class="logo">🛡 VibeScan • Security Report</div>
     <h1>{os.path.basename(result.target_path)}</h1>
     <div class="meta">
       <span>Generated: {now}</span>
@@ -330,7 +330,7 @@ def generate_html(result: ScanResult) -> str:
 
   <!-- Footer -->
   <div class="footer">
-    <span class="footer-text">VibeCodeReviewer v1.0.0 • {now}</span>
+    <span class="footer-text">VibeScan v1.0.0 • {now}</span>
     <span class="footer-text">
       <a href="https://cwe.mitre.org" target="_blank" style="color:var(--text3);text-decoration:none">CWE Reference</a>
     </span>

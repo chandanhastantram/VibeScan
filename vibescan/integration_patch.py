@@ -1,6 +1,6 @@
 # ── Integration patch for report.py ────────────────────────────────────────────
 #
-# 1. Copy html_report.py into vibecodereviewer/ (alongside report.py).
+# 1. Copy html_report.py into vibescan/ (alongside report.py).
 #
 # 2. In report.py, add this import at the top:
 #
@@ -31,7 +31,7 @@ def write_report(result, output_path: str, fmt: str = "md") -> None:
 #      choices=["md", "json", "html"]
 #
 # 5. Usage:
-#      python -m vibecodereviewer.cli scan ./my_project --output report.html --format html
+#      python -m vibescan.cli scan ./my_project --output report.html --format html
 #
 # That's it. The HTML report is self-contained (no CDN dependencies at runtime),
 # dark-themed, filterable by severity, searchable by keyword, and auto-expands

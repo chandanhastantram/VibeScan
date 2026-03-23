@@ -1,5 +1,5 @@
 """
-VibeCodeReviewer — Base Scanner
+VibeScan — Base Scanner
 Abstract base class that all scanners inherit from.
 """
 

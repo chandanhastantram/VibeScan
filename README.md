@@ -1,4 +1,4 @@
-# 🛡️ VibeCodeReviewer
+# 🛡️ VibeScan
 
 **Autonomous Security Vulnerability Scanner** — scans any codebase for security bugs using static analysis and returns a rich, actionable report.
 
@@ -23,7 +23,7 @@
 ## Installation
 
 ```bash
-cd vibecodereviewer
+cd vibescan
 pip install -e .
 ```
 
@@ -39,27 +39,27 @@ pip install colorama pyyaml
 
 ### Basic scan (terminal output only)
 ```
-python -m vibecodereviewer.cli scan /path/to/your/project
+python -m vibescan.cli scan /path/to/your/project
 ```
 
 ### Generate a Markdown report
 ```
-python -m vibecodereviewer.cli scan /path/to/your/project --output report.md
+python -m vibescan.cli scan /path/to/your/project --output report.md
 ```
 
 ### Generate a JSON report
 ```
-python -m vibecodereviewer.cli scan /path/to/your/project --output report.json --format json
+python -m vibescan.cli scan /path/to/your/project --output report.json --format json
 ```
 
 ### Filter by minimum severity
 ```
-python -m vibecodereviewer.cli scan /path/to/your/project --severity HIGH
+python -m vibescan.cli scan /path/to/your/project --severity HIGH
 ```
 
 ### Scan the included sample vulnerable project
 ```
-python -m vibecodereviewer.cli scan ./sample_vulnerable --output report.md
+python -m vibescan.cli scan ./sample_vulnerable --output report.md
 ```
 
 ---
@@ -82,7 +82,7 @@ python -m vibecodereviewer.cli scan ./sample_vulnerable --output report.md
 
 ## Configuration (optional)
 
-Create `.vibecodereviewer.yml` in your project root:
+Create `.vibescan.yml` in your project root:
 
 ```yaml
 min_severity: HIGH           # Only report HIGH and CRITICAL
@@ -109,7 +109,7 @@ extra_secret_patterns:        # Your own regex patterns
 
 Use in CI/CD:
 ```bash
-python -m vibecodereviewer.cli scan . --severity HIGH || exit 1
+python -m vibescan.cli scan . --severity HIGH || exit 1
 ```
 
 ---
@@ -117,11 +117,11 @@ python -m vibecodereviewer.cli scan . --severity HIGH || exit 1
 ## Project Structure
 
 ```
-vibecodereviewer/
-├── vibecodereviewer/
+vibescan/
+├── vibescan/
 │   ├── cli.py              # CLI entry point
 │   ├── engine.py           # File walker + dispatcher
-│   ├── config.py           # .vibecodereviewer.yml loader
+│   ├── config.py           # .vibescan.yml loader
 │   ├── models.py           # Finding, ScanResult, Severity
 │   ├── report.py           # Markdown + JSON report generator
 │   └── scanners/

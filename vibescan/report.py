@@ -1,5 +1,5 @@
 """
-VibeCodeReviewer — Report Generator
+VibeScan — Report Generator
 Produces rich Markdown and JSON reports from a ScanResult.
 """
 
@@ -26,7 +26,7 @@ def generate_markdown(result: ScanResult) -> str:
 
     # ── Header ────────────────────────────────────────────────────────────────
     lines += [
-        "# 🛡️ VibeCodeReviewer Security Report",
+        "# 🛡️ VibeScan Security Report",
         "",
         f"**Generated:** {now}  ",
         f"**Target:** `{result.target_path}`  ",

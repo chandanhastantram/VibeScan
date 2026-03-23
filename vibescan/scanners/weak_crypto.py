@@ -1,5 +1,5 @@
 """
-VibeCodeReviewer — Weak Cryptography Scanner
+VibeScan — Weak Cryptography Scanner
 Detects use of broken or weak cryptographic algorithms, insecure modes,
 and small key sizes that do not meet modern security standards.
 """

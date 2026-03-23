@@ -1,5 +1,5 @@
 """
-VibeCodeReviewer — CLI Entry Point (v2)
+VibeScan — CLI Entry Point (v2)
 All new flags: --sarif, --baseline, --save-baseline, --plugins, --live-cve, --workers
 """
 
@@ -36,7 +36,7 @@ GRAY   = "\033[90m"  if _USE_COLOR else ""
 
 BANNER = f"""{RED}{BOLD}
   ================================================================
-   VibeCodeReviewer  --  Autonomous Security Vulnerability Scanner
+   VibeScan  --  Autonomous Security Vulnerability Scanner
    v2.0.0
   ================================================================
 {RESET}"""
@@ -157,7 +157,7 @@ def cmd_scan(args) -> int:
             from .storage import ScanStore
             scan_id = ScanStore().save_scan(result)
             print(f"  {DIM}\u270e Scan saved to history (id={scan_id}). "
-                  f"Run {RESET}{CYAN}vibecodereviewer serve{RESET}{DIM} to view.{RESET}\n")
+                  f"Run {RESET}{CYAN}vibescan serve{RESET}{DIM} to view.{RESET}\n")
         except Exception:
             pass  # never let storage failure break a scan
 
@@ -190,8 +190,8 @@ def cmd_list_plugins(args) -> int:
 
 def main():
     parser = argparse.ArgumentParser(
-        prog="vibecodereviewer",
-        description="VibeCodeReviewer v2 — Autonomous Security Vulnerability Scanner",
+        prog="vibescan",
+        description="VibeScan v2 — Autonomous Security Vulnerability Scanner",
     )
     subparsers = parser.add_subparsers(dest="command")
 

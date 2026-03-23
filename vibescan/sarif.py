@@ -1,5 +1,5 @@
 """
-VibeCodeReviewer — SARIF Output Generator
+VibeScan — SARIF Output Generator
 Produces a Static Analysis Results Interchange Format (SARIF) 2.1.0 JSON file.
 
 SARIF enables:
@@ -24,9 +24,9 @@ _SEVERITY_MAP = {
     Severity.INFO:     ("none",    "1.0"),
 }
 
-TOOL_NAME    = "VibeCodeReviewer"
+TOOL_NAME    = "VibeScan"
 TOOL_VERSION = "1.0.0"
-TOOL_URI     = "https://github.com/vibecodereviewer/vibecodereviewer"
+TOOL_URI     = "https://github.com/vibescan/vibescan"
 
 
 def _make_rule(finding) -> dict:

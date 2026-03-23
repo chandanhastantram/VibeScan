@@ -1,12 +1,12 @@
 """
-CodeSentinel — Local Web Dashboard Server
+VibeScan — Local Web Dashboard Server
 Starts a local HTTP server serving the scan history dashboard.
 Zero extra dependencies — uses only stdlib (http.server, json, threading).
 
 Usage:
-    python -m vibecodereviewer serve
-    python -m vibecodereviewer serve --port 8080
-    python -m vibecodereviewer serve --db /path/to/custom.db
+    python -m vibescan serve
+    python -m vibescan serve --port 8080
+    python -m vibescan serve --db /path/to/custom.db
 """
 
 import json
@@ -27,7 +27,7 @@ _DASHBOARD_HTML = """<!DOCTYPE html>
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CodeSentinel Dashboard</title>
+<title>VibeScan Dashboard</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap');
@@ -148,7 +148,7 @@ _DASHBOARD_HTML = """<!DOCTYPE html>
 
   <!-- Sidebar -->
   <aside class="sidebar">
-    <div class="logo"><span>&#9635;</span> CodeSentinel</div>
+    <div class="logo"><span>&#9635;</span> VibeScan</div>
     <div class="nav-section">Views</div>
     <div class="nav-item active" onclick="showView('dashboard')">
       <span class="nav-dot" style="background:var(--green)"></span> Dashboard
@@ -324,7 +324,7 @@ function renderStats(s){
   document.getElementById('s-projects').textContent=s.total_projects??'0';
   document.getElementById('s-last').textContent=s.last_scan?s.last_scan.slice(0,10):'\u2014';
   document.getElementById('overview-sub').textContent=`${s.total_scans||0} scans across ${s.total_projects||0} project(s)`;
-  document.getElementById('db-path').textContent=`DB: ${s.db_path||'~/.codesentinel/history.db'}`;
+  document.getElementById('db-path').textContent=`DB: ${s.db_path||'~/.vibescan/history.db'}`;
 }
 
 // ── Render targets sidebar ─────────────────────────────────────────────────────
@@ -352,7 +352,7 @@ function selectTarget(path){
 
 function renderRecent(scans){
   const tbody=document.getElementById('recent-tbody');
-  if(!scans.length){tbody.innerHTML='<tr><td colspan="7" class="empty"><p>No scans yet. Run <code>codesentinel scan .</code> to get started.</p></td></tr>';return;}
+  if(!scans.length){tbody.innerHTML='<tr><td colspan="7" class="empty"><p>No scans yet. Run <code>vibescan scan .</code> to get started.</p></td></tr>';return;}
   tbody.innerHTML=scans.map(s=>`
     <tr>
       <td class="mono">${shortPath(s.target_path)}</td>
@@ -631,7 +631,7 @@ def start_server(
     server  = HTTPServer(("127.0.0.1", port), handler)
     url     = f"http://localhost:{port}"
 
-    print(f"\n  \033[92m\u2714\033[0m  CodeSentinel Dashboard  \u2192  \033[96m{url}\033[0m")
+    print(f"\n  \033[92m\u2714\033[0m  VibeScan Dashboard  \u2192  \033[96m{url}\033[0m")
     print(f"  \033[2m   Database: {store.db_path}\033[0m")
     print(f"  \033[2m   Press Ctrl-C to stop\033[0m\n")
 

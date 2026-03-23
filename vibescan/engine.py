@@ -1,5 +1,5 @@
 """
-VibeCodeReviewer — Scan Engine (v2)
+VibeScan — Scan Engine (v2)
 Parallel file scanning with ThreadPoolExecutor + suppression support.
 Dispatches files to all registered scanners; collects, deduplicates, and
 filters findings. Integrated AST scanner, plugin support, and suppressions.
@@ -191,7 +191,7 @@ def run_scan(
             else:
                 result.files_skipped += 1
 
-    # Phase 3: apply inline suppressions (# nosec / # vibecodereviewer: ignore)
+    # Phase 3: apply inline suppressions (# nosec / # vibescan: ignore)
     all_findings, suppressed_count = apply_suppressions(all_findings, file_lines_cache)
     result.files_skipped += 0   # suppressed findings are not skipped files
 

@@ -98,15 +98,15 @@ venv.bak/
 # mypy
 .mypy_cache/
 
-# CodeSentinel specific
+# VibeScan specific
 baseline.json
 report.html
 report.md
 results.sarif
 *.log
 _verify.py
-_codesentinel_plugin_*
-.codesentinel_osv_cache.json
+_vibescan_plugin_*
+.vibescan_osv_cache.json
   
 # IDEs
 .vscode/
