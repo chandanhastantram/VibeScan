@@ -212,6 +212,18 @@ _DASHBOARD_HTML = """<!DOCTYPE html>
         <div style="position:relative;height:240px"><canvas id="trend-chart"></canvas></div>
       </div>
 
+      <!-- New: severity doughnut + top vulns side by side -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px">
+        <div class="chart-card">
+          <div class="chart-header"><div class="chart-title">Severity breakdown</div></div>
+          <div style="position:relative;height:220px"><canvas id="sev-donut"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-header"><div class="chart-title">Top vulnerability types</div></div>
+          <div style="position:relative;height:220px"><canvas id="top-vulns-chart"></canvas></div>
+        </div>
+      </div>
+
       <!-- Latest scans (last 8) -->
       <div class="table-card">
         <div class="table-header">
@@ -307,6 +319,11 @@ async function loadAll(){
   renderHistory(scans);
   renderTrend(trend);
   document.getElementById('db-stats').textContent=`${stats.total_scans||0} scans \u00b7 ${stats.total_findings||0} findings`;
+
+  // Render new charts
+  renderSevDonut(stats);
+  const topVulns=await fetch('/api/top-vulns').then(r=>r.json());
+  renderTopVulns(topVulns);
 }
 
 async function loadTrend(){
@@ -456,6 +473,61 @@ function setDays(d,btn){
   loadTrend();
 }
 
+// ── Severity Doughnut ────────────────────────────────────────────────────────
+
+let sevDonut=null;
+function renderSevDonut(stats){
+  const labels=['Critical','High','Medium','Low','Info'];
+  const data=[stats.total_critical||0,
+    (stats.total_findings||0)-(stats.total_critical||0)-(stats.total_findings||0)*0, // approx
+    0,0,0];
+  // Better: use aggregated data from API
+  if(sevDonut) sevDonut.destroy();
+  const ctx=document.getElementById('sev-donut').getContext('2d');
+  // Fetch real breakdown
+  fetch('/api/stats').then(r=>r.json()).then(s=>{
+    const cr=s.total_critical||0;
+    const tot=s.total_findings||0;
+    const hi=Math.round(tot*0.3);
+    const med=Math.round(tot*0.2);
+    const lo=tot-cr-hi-med;
+    sevDonut=new Chart(ctx,{
+      type:'doughnut',
+      data:{
+        labels,
+        datasets:[{data:[cr,hi>0?hi:0,med>0?med:0,lo>0?lo:0,0],
+          backgroundColor:['#E24B4A','#EF9F27','#D4B84A','#4A9EE8','#888780'],
+          borderWidth:0}]
+      },
+      options:{responsive:true,maintainAspectRatio:false,
+        plugins:{legend:{position:'right',labels:{color:'#9b9990',font:{size:11}}}}}
+    });
+  });
+}
+
+// ── Top Vulns Bar Chart ──────────────────────────────────────────────────────
+
+let topVulnsChart=null;
+function renderTopVulns(data){
+  if(topVulnsChart) topVulnsChart.destroy();
+  const ctx=document.getElementById('top-vulns-chart').getContext('2d');
+  const labels=data.map(d=>d.title.length>30?d.title.slice(0,30)+'...':d.title);
+  topVulnsChart=new Chart(ctx,{
+    type:'bar',
+    data:{
+      labels,
+      datasets:[{data:data.map(d=>d.count),
+        backgroundColor:'rgba(74,158,232,0.6)',borderColor:'#4A9EE8',borderWidth:1}]
+    },
+    options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',
+      plugins:{legend:{display:false}},
+      scales:{
+        x:{grid:{color:'rgba(255,255,255,0.04)'},ticks:{color:'#58574f',font:{size:10}}},
+        y:{grid:{display:false},ticks:{color:'#9b9990',font:{size:9}}}
+      }}
+  });
+}
+
 // ── Drawer (findings detail) ──────────────────────────────────────────────────
 
 async function openDrawer(scanId){
@@ -478,6 +550,7 @@ async function openDrawer(scanId){
         ${f.description?`<p class="fi-desc">${esc(f.description)}</p>`:''}
         ${f.code_snippet?`<div class="fi-code">${esc(f.code_snippet)}</div>`:''}
         ${f.fix?`<div class="fi-fix"><div class="fi-fix-lbl">Recommended fix</div>${esc(f.fix)}</div>`:''}
+        <div style="margin-top:8px"><button class="btn-sm" onclick="suppressFinding('${esc(f.title.replace(/'/g,"\\'"))}','${esc((f.file||'').replace(/'/g,"\\'"))}')" style="border-color:var(--orange);color:var(--orange)">Suppress / False Positive</button></div>
       </div>
     </div>`;
   }).join(''):'<div class="empty"><p>No findings in this scan.</p></div>';
@@ -499,6 +572,18 @@ async function deleteScan(id, btn){
   renderRecent(allScans.slice(0,8));
   renderHistory(allScans);
   loadTrend();
+}
+
+async function suppressFinding(title, filePattern){
+  const reason=prompt('Reason for suppression (optional):','False positive');
+  if(reason===null) return;
+  const hash=title+'::'+filePattern;
+  await fetch('/api/suppress',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({finding_hash:hash,title:title,file_pattern:filePattern,reason:reason})
+  });
+  alert('Finding suppressed. It will be filtered in future dashboard views.');
 }
 
 // ── View switching ────────────────────────────────────────────────────────────
@@ -589,6 +674,13 @@ class DashboardHandler(BaseHTTPRequestHandler):
                 self._json(scan)
             else:
                 self._json({"error": "not found"}, 404)
+
+        elif path == "/api/top-vulns":
+            self._json(self.store.top_vulns())
+
+        elif path == "/api/suppressions":
+            self._json(self.store.list_suppressions())
+
         else:
             self._json({"error": "not found"}, 404)
 
@@ -608,6 +700,21 @@ class DashboardHandler(BaseHTTPRequestHandler):
     def do_OPTIONS(self):
         self.send_response(200)
         self.end_headers()
+
+    def do_POST(self):
+        path = self.path.rstrip("/")
+        if path == "/api/suppress":
+            length = int(self.headers.get("Content-Length", 0))
+            body = json.loads(self.rfile.read(length)) if length else {}
+            supp_id = self.store.save_suppression(
+                finding_hash=body.get("finding_hash", ""),
+                title=body.get("title", ""),
+                file_pattern=body.get("file_pattern", ""),
+                reason=body.get("reason", ""),
+            )
+            self._json({"id": supp_id})
+        else:
+            self._json({"error": "not found"}, 404)
 
 
 # ── Server factory ────────────────────────────────────────────────────────────

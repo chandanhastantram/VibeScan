@@ -20,8 +20,12 @@
 | 📦 **Insecure Deserialization** | `pickle.load`, `yaml.load` without SafeLoader, `marshal`, `shelve`, PHP `unserialize` |
 | 🔐 **Weak Crypto** | MD5/SHA1, DES/RC4, ECB mode, small RSA keys, `random` for security, hardcoded IVs |
 | 📢 **Sensitive Data Exposure** | Logging passwords, `DEBUG=True`, Flask `debug=True`, weak `SECRET_KEY` |
-| 📋 **Dependencies** | Known CVEs in `requirements.txt` and `package.json` (live OSV API + bundled offline DB) |
+| 📋 **Dependencies** | Known CVEs in `requirements.txt`, `package.json`, `yarn.lock`, `poetry.lock` and `Pipfile.lock` |
 | 🧠 **AST Analysis** | Deep Python analysis via Abstract Syntax Tree — catches obfuscated patterns |
+| 🏗️ **Infrastructure** (v2.1) | Best practice scans for Dockerfiles, `docker-compose.yml`, Kubernetes manifests, Terraform `.tf` |
+| 🛠️ **Custom Rules** (v2.1) | Define own security patterns via `.vibescan-rules.yml` without writing Python code |
+| 🩹 **Auto-Remediate** (v2.1) | `vibescan scan . --fix` suggests before/after diffs to patch vulnerabilities immediately |
+| 💻 **IDE Extension** (v2.1) | Official [VS Code Extension](#-vscode-extension) with red squiggles and quick-fix lightbulbs |
 
 ---
 
@@ -56,6 +60,11 @@ vibescan scan . --output report.md
 ### Generate an interactive HTML report
 ```bash
 vibescan scan . --output report.html --format html
+```
+
+### Generate a PDF report
+```bash
+vibescan scan . --output report.pdf --format pdf
 ```
 
 ### Generate a SARIF report (for GitHub Security tab)
@@ -142,6 +151,31 @@ enabled_scanners:
   - command_injection
 extra_secret_patterns:
   - "MY_INTERNAL_TOKEN_[A-Z0-9]{20}"
+```
+
+---
+
+## 🛠️ VS Code Extension
+
+VibeScan includes a full VS Code extension. To install locally:
+1. Navigate to `vscode-vibescan/`
+2. Run `npm install` and `npx @vscode/vsce package`
+3. Install the generated `.vsix` file in Visual Studio Code.
+
+Enjoy live red/yellow squiggles as you type, quick-fix \"lightbulb\" code actions, and automated scans on save.
+
+---
+
+## 🔗 Pre-commit Hook
+
+Prevent vulnerabilities from ever being committed. Add to `.pre-commit-config.yaml`:
+
+```yaml
+repos:
+  - repo: https://github.com/chandanhastantram/vibecodereviewer
+    rev: main
+    hooks:
+      - id: vibescan
 ```
 
 ---

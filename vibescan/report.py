@@ -151,7 +151,12 @@ def generate_json(result: ScanResult) -> str:
 
 
 def write_report(result: ScanResult, output_path: str, fmt: str = "md") -> None:
-    """Write the report to a file. fmt: 'md' | 'json' | 'html'"""
+    """Write the report to a file. fmt: 'md' | 'json' | 'html' | 'pdf'"""
+    if fmt == "pdf":
+        from .pdf_report import write_pdf
+        write_pdf(result, output_path)
+        return
+
     if fmt == "json":
         content = generate_json(result)
     elif fmt == "html":

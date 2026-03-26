@@ -45,6 +45,17 @@ CREATE INDEX IF NOT EXISTS idx_scans_target ON scans(target_path);
 CREATE INDEX IF NOT EXISTS idx_scans_at     ON scans(scanned_at);
 """
 
+_CREATE_SUPPRESSIONS = """
+CREATE TABLE IF NOT EXISTS suppressions (
+    id            INTEGER PRIMARY KEY AUTOINCREMENT,
+    finding_hash  TEXT    NOT NULL UNIQUE,
+    title         TEXT    NOT NULL DEFAULT '',
+    file_pattern  TEXT    NOT NULL DEFAULT '',
+    reason        TEXT    NOT NULL DEFAULT '',
+    created_at    TEXT    NOT NULL
+);
+"""
+
 
 # ── ScanStore ─────────────────────────────────────────────────────────────────
 
@@ -66,7 +77,7 @@ class ScanStore:
 
     def _init_db(self) -> None:
         with self._connect() as conn:
-            conn.executescript(_CREATE_SCANS + _CREATE_IDX)
+            conn.executescript(_CREATE_SCANS + _CREATE_IDX + _CREATE_SUPPRESSIONS)
 
     # ── Write ─────────────────────────────────────────────────────────────────
 
@@ -182,3 +193,63 @@ class ScanStore:
                 FROM scans
             """).fetchone()
         return dict(row) if row else {}
+
+    # ── Suppressions ──────────────────────────────────────────────────────────
+
+    def save_suppression(self, finding_hash: str, title: str = "",
+                         file_pattern: str = "", reason: str = "") -> int:
+        """Mark a finding hash as suppressed (false positive)."""
+        with self._connect() as conn:
+            cur = conn.execute("""
+                INSERT OR IGNORE INTO suppressions
+                    (finding_hash, title, file_pattern, reason, created_at)
+                VALUES (?, ?, ?, ?, ?)
+            """, (finding_hash, title, file_pattern, reason,
+                  datetime.now().isoformat(timespec="seconds")))
+            return int(cur.lastrowid or 0)
+
+    def list_suppressions(self) -> list[dict]:
+        with self._connect() as conn:
+            rows = conn.execute(
+                "SELECT * FROM suppressions ORDER BY created_at DESC"
+            ).fetchall()
+        return [dict(r) for r in rows]
+
+    def delete_suppression(self, supp_id: int) -> bool:
+        with self._connect() as conn:
+            cur = conn.execute("DELETE FROM suppressions WHERE id = ?", (supp_id,))
+            return cur.rowcount > 0
+
+    def is_suppressed(self, finding_hash: str) -> bool:
+        with self._connect() as conn:
+            row = conn.execute(
+                "SELECT 1 FROM suppressions WHERE finding_hash = ?", (finding_hash,)
+            ).fetchone()
+        return row is not None
+
+    # ── Analytics ──────────────────────────────────────────────────────────────
+
+    def top_vulns(self, limit: int = 10) -> list[dict]:
+        """
+        Return the most common finding titles across all scans.
+        Parses findings_json to aggregate by title.
+        """
+        with self._connect() as conn:
+            rows = conn.execute(
+                "SELECT findings_json FROM scans ORDER BY scanned_at DESC LIMIT 200"
+            ).fetchall()
+
+        from collections import Counter
+        counter: Counter = Counter()
+        for row in rows:
+            try:
+                findings = json.loads(row["findings_json"] or "[]")
+                for f in findings:
+                    counter[f.get("title", "Unknown")] += 1
+            except (json.JSONDecodeError, TypeError):
+                pass
+
+        return [
+            {"title": title, "count": count}
+            for title, count in counter.most_common(limit)
+        ]

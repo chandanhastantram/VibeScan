@@ -1,0 +1,72 @@
+{
+  "name": "vscode-vibescan",
+  "displayName": "VibeScan Security Scanner",
+  "description": "Real-time security vulnerability detection with inline diagnostics, quick-fixes, and status bar integration.",
+  "version": "1.0.0",
+  "publisher": "vibescan",
+  "engines": {
+    "vscode": "^1.80.0"
+  },
+  "categories": ["Linters", "Programming Languages"],
+  "keywords": ["security", "vulnerability", "scanner", "linter", "vibescan"],
+  "icon": "icon.png",
+  "activationEvents": [
+    "onLanguage:python",
+    "onLanguage:javascript",
+    "onLanguage:typescript",
+    "onLanguage:yaml",
+    "onLanguage:json",
+    "onLanguage:html",
+    "onLanguage:php",
+    "onLanguage:java",
+    "onLanguage:dockerfile"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "vibescan.scanWorkspace",
+        "title": "VibeScan: Scan Workspace"
+      },
+      {
+        "command": "vibescan.scanFile",
+        "title": "VibeScan: Scan Current File"
+      },
+      {
+        "command": "vibescan.clearDiagnostics",
+        "title": "VibeScan: Clear All Diagnostics"
+      }
+    ],
+    "configuration": {
+      "title": "VibeScan",
+      "properties": {
+        "vibescan.severity": {
+          "type": "string",
+          "default": "INFO",
+          "enum": ["CRITICAL", "HIGH", "MEDIUM", "LOW", "INFO"],
+          "description": "Minimum severity level to report"
+        },
+        "vibescan.scanOnSave": {
+          "type": "boolean",
+          "default": true,
+          "description": "Automatically scan files when saved"
+        },
+        "vibescan.pythonPath": {
+          "type": "string",
+          "default": "python",
+          "description": "Path to the Python interpreter"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.80.0",
+    "@types/node": "^18.0.0",
+    "typescript": "^5.0.0"
+  }
+}

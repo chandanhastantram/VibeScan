@@ -1,6 +1,7 @@
 """
 VibeScan — CLI Entry Point (v2)
-All new flags: --sarif, --baseline, --save-baseline, --plugins, --live-cve, --workers
+All new flags: --sarif, --baseline, --save-baseline, --plugins, --live-cve, --workers,
+               --staged-only, --fix, --rules, --format pdf
 """
 
 import os
@@ -37,7 +38,7 @@ GRAY   = "\033[90m"  if _USE_COLOR else ""
 BANNER = f"""{RED}{BOLD}
   ================================================================
    VibeScan  --  Autonomous Security Vulnerability Scanner
-   v2.0.0
+   v2.1.0
   ================================================================
 {RESET}"""
 
@@ -108,9 +109,36 @@ def cmd_scan(args) -> int:
         print(f"  {BOLD}Plugins: {RESET} {plugins_dir}")
         extra_scanners = discover_plugins(plugins_dir)
 
+    # YAML custom rules
+    yaml_rule_scanner = None
+    if args.rules:
+        from .yaml_rules import load_yaml_rules, YAMLRuleScanner
+        rules_path = os.path.abspath(args.rules)
+        print(f"  {BOLD}Rules:  {RESET} {rules_path}")
+        rules = load_yaml_rules(rules_path)
+        if rules:
+            yaml_rule_scanner = YAMLRuleScanner(rules)
+            extra_scanners.append(yaml_rule_scanner)
+            print(f"  {GREEN}✔ Loaded {len(rules)} custom rule(s){RESET}")
+
     print(f"\n  {DIM}Running scanners...{RESET}", flush=True)
 
-    result = run_scan(target, config, extra_scanners=extra_scanners, max_workers=args.workers)
+    # Staged-only mode for pre-commit
+    staged_files = None
+    if getattr(args, 'staged_only', False):
+        import subprocess as _sp
+        try:
+            out = _sp.check_output(
+                ["git", "diff", "--cached", "--name-only", "--diff-filter=ACM"],
+                cwd=target, text=True
+            )
+            staged_files = [os.path.join(target, f.strip()) for f in out.strip().splitlines() if f.strip()]
+            print(f"  {CYAN}Pre-commit mode:{RESET} scanning {len(staged_files)} staged file(s)")
+        except Exception:
+            print(f"  {YELLOW}Warning:{RESET} Could not get staged files, scanning full directory.")
+
+    result = run_scan(target, config, extra_scanners=extra_scanners,
+                      max_workers=args.workers, staged_files=staged_files)
 
     # ── Baseline diff ─────────────────────────────────────────────────────────
     new_findings = result.findings
@@ -149,6 +177,26 @@ def cmd_scan(args) -> int:
         print(f"  {GRAY}  → Upload to GitHub: actions/upload-sarif@v3{RESET}")
 
     if args.output or args.sarif:
+        print()
+
+    # ── Show auto-fix diffs (--fix mode) ─────────────────────────────────────
+    if getattr(args, 'fix', False) and result.findings:
+        print(f"  {BOLD}Auto-Remediation Suggestions:{RESET}")
+        has_fix = False
+        for finding in result.sorted_findings():
+            if finding.fix and '\n' in finding.fix:
+                has_fix = True
+                rel = os.path.relpath(finding.file, target)
+                print(f"\n  {CYAN}{rel}{RESET}:{YELLOW}line {finding.line}{RESET} — {finding.title}")
+                for fix_line in finding.fix.splitlines():
+                    if fix_line.strip().startswith('Before:'):
+                        print(f"    {RED}- {fix_line.strip()}{RESET}")
+                    elif fix_line.strip().startswith('After:'):
+                        print(f"    {GREEN}+ {fix_line.strip()}{RESET}")
+                    else:
+                        print(f"    {DIM}{fix_line}{RESET}")
+        if not has_fix:
+            print(f"  {DIM}No auto-fix suggestions available for current findings.{RESET}")
         print()
 
     # ── Auto-save to history DB ───────────────────────────────────────────────
@@ -199,8 +247,8 @@ def main():
     sp = subparsers.add_parser("scan", help="Scan a directory for security vulnerabilities")
     sp.add_argument("path",                     help="Directory to scan")
     sp.add_argument("--output",     "-o",       help="Report output path (e.g. report.md)")
-    sp.add_argument("--format",     "-f",       default="md", choices=["md", "json", "html"],
-                    help="Report format: md, json, or html (default: md)")
+    sp.add_argument("--format",     "-f",       default="md", choices=["md", "json", "html", "pdf"],
+                    help="Report format: md, json, html, or pdf (default: md)")
     sp.add_argument("--sarif",                  help="Write SARIF 2.1.0 output to this path (e.g. results.sarif)")
     sp.add_argument("--severity",   "-s",       default="INFO",
                     choices=["CRITICAL", "HIGH", "MEDIUM", "LOW", "INFO"],
@@ -212,6 +260,12 @@ def main():
                     help="Number of parallel worker threads (default: 8)")
     sp.add_argument("--no-save",                action="store_true",
                      help="Don't save this scan to the history database")
+    sp.add_argument("--staged-only",             action="store_true",
+                     help="Scan only git-staged files (for pre-commit hooks)")
+    sp.add_argument("--fix",                     action="store_true",
+                     help="Show auto-remediation suggestions with before/after diffs")
+    sp.add_argument("--rules",                   default=None,
+                     help="Path to a .vibescan-rules.yml custom rule file")
 
     # ── serve ─────────────────────────────────────────────────────────────────
     srv = subparsers.add_parser("serve", help="Launch the local web dashboard")

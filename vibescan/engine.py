@@ -21,6 +21,8 @@ from .scanners.weak_crypto      import WeakCryptoScanner
 from .scanners.sensitive_data   import SensitiveDataScanner
 from .scanners.dependencies     import DependencyScanner
 from .scanners.ast_scanner      import ASTScanner
+from .scanners.iac_scanner      import IaCScanner
+from .remediation               import enhance_findings_with_remediation
 
 
 _SEVERITY_ORDER = {
@@ -41,6 +43,7 @@ def _build_scanners(config: ScanConfig, extra_scanners: list | None = None):
         "sensitive_data":    SensitiveDataScanner(),
         "dependencies":      DependencyScanner(),
         "ast_scanner":       ASTScanner(),
+        "iac":               IaCScanner(),
     }
     if config.enabled_scanners:
         scanners = [v for k, v in all_scanners.items() if k in config.enabled_scanners]
@@ -146,6 +149,7 @@ def run_scan(
     config: ScanConfig,
     extra_scanners: list | None = None,
     max_workers: int = 8,
+    staged_files: list[str] | None = None,
 ) -> ScanResult:
     """
     Walk target_path, scan all eligible files in parallel,
@@ -156,6 +160,7 @@ def run_scan(
         config:         ScanConfig (from load_config or defaults).
         extra_scanners: Additional plugin scanner instances.
         max_workers:    ThreadPoolExecutor concurrency (default 8).
+        staged_files:   If provided, only scan these files (for pre-commit mode).
     """
     result = ScanResult(target_path=target_path)
     scanners = _build_scanners(config, extra_scanners)
@@ -164,7 +169,10 @@ def run_scan(
     start = time.perf_counter()
 
     # Phase 1: collect all eligible files
-    filepaths = _collect_files(target_path, config)
+    if staged_files:
+        filepaths = [os.path.abspath(f) for f in staged_files if os.path.isfile(f)]
+    else:
+        filepaths = _collect_files(target_path, config)
 
     # Phase 2: scan in parallel
     all_findings: list[Finding] = []
@@ -203,6 +211,9 @@ def run_scan(
         if key not in seen:
             seen.add(key)
             unique.append(f)
+
+    # Phase 5: enhance with auto-remediation suggestions
+    unique = enhance_findings_with_remediation(unique)
 
     result.findings = unique
     result.scan_duration = time.perf_counter() - start

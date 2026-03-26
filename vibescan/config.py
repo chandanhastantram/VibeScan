@@ -31,7 +31,7 @@ class ScanConfig:
         ".py", ".js", ".ts", ".jsx", ".tsx", ".java", ".php", ".rb",
         ".go", ".cs", ".cpp", ".c", ".h", ".sh", ".env", ".yml",
         ".yaml", ".json", ".xml", ".html", ".cfg", ".ini", ".conf",
-        ".toml", ".txt",
+        ".toml", ".txt", ".lock", ".tf", ".hcl",
     ])
 
     # Scanners to enable (empty = all)

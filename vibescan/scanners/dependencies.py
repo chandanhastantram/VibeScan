@@ -138,7 +138,7 @@ _SEVERITY_MAP = {
 
 class DependencyScanner(BaseScanner):
     name = "DependencyScanner"
-    SUPPORTED_EXTENSIONS = (".txt", ".json")
+    SUPPORTED_EXTENSIONS = (".txt", ".json", ".lock", ".toml")
 
     def scan_file(self, filepath: str, content: str, lines: list[str]) -> list[Finding]:
         findings = []
@@ -148,6 +148,14 @@ class DependencyScanner(BaseScanner):
             findings += self._scan_requirements(filepath, lines)
         elif basename == "package.json":
             findings += self._scan_package_json(filepath, content)
+        elif basename == "poetry.lock":
+            findings += self._scan_poetry_lock(filepath, content)
+        elif basename == "pipfile.lock":
+            findings += self._scan_pipfile_lock(filepath, content)
+        elif basename == "yarn.lock":
+            findings += self._scan_yarn_lock(filepath, lines)
+        elif basename == "package-lock.json":
+            findings += self._scan_package_lock_json(filepath, content)
 
         return findings
 
@@ -211,5 +219,116 @@ class DependencyScanner(BaseScanner):
                         cwe_id="CWE-1035",
                         fix=vuln["fix"],
                         scanner=self.name,
+                    ))
+        return findings
+
+    # ────────────────────────────────────────────────────────── poetry.lock
+
+    def _scan_poetry_lock(self, filepath: str, content: str) -> list[Finding]:
+        findings = []
+        # Parse [[package]] blocks — TOML-like format
+        pkg_re = re.compile(r'name\s*=\s*"([^"]+)"')
+        ver_re = re.compile(r'version\s*=\s*"([^"]+)"')
+        current_pkg = None
+        for lineno, line in enumerate(content.splitlines(), start=1):
+            m_pkg = pkg_re.search(line)
+            if m_pkg:
+                current_pkg = (m_pkg.group(1).lower(), lineno)
+            m_ver = ver_re.search(line)
+            if m_ver and current_pkg:
+                ver = m_ver.group(1)
+                vulns = VULN_DB.get(current_pkg[0], [])
+                for vuln in vulns:
+                    if _version_lte(ver, vuln["max_version"]):
+                        findings.append(Finding(
+                            file=filepath, line=current_pkg[1],
+                            severity=_SEVERITY_MAP.get(vuln["severity"], Severity.MEDIUM),
+                            title=f"Vulnerable Dependency — {current_pkg[0]} {ver} ({vuln['cve']})",
+                            description=vuln["desc"], code_snippet=f'{current_pkg[0]}=={ver}',
+                            cwe_id="CWE-1035", fix=vuln["fix"], scanner=self.name,
+                        ))
+                current_pkg = None
+        return findings
+
+    # ────────────────────────────────────────────────────────── Pipfile.lock
+
+    def _scan_pipfile_lock(self, filepath: str, content: str) -> list[Finding]:
+        findings = []
+        try:
+            data = json.loads(content)
+        except json.JSONDecodeError:
+            return findings
+        for section in ("default", "develop"):
+            pkgs = data.get(section, {})
+            for pkg, info in pkgs.items():
+                ver = re.sub(r'^==', '', info.get("version", "")).strip()
+                if not ver:
+                    continue
+                vulns = VULN_DB.get(pkg.lower(), [])
+                for vuln in vulns:
+                    if _version_lte(ver, vuln["max_version"]):
+                        findings.append(Finding(
+                            file=filepath, line=1,
+                            severity=_SEVERITY_MAP.get(vuln["severity"], Severity.MEDIUM),
+                            title=f"Vulnerable Dependency — {pkg} {ver} ({vuln['cve']})",
+                            description=vuln["desc"], code_snippet=f'{pkg}=={ver}',
+                            cwe_id="CWE-1035", fix=vuln["fix"], scanner=self.name,
+                        ))
+        return findings
+
+    # ────────────────────────────────────────────────────────── yarn.lock
+
+    def _scan_yarn_lock(self, filepath: str, lines: list[str]) -> list[Finding]:
+        findings = []
+        # Format: "package@^x.y.z":\n  version "a.b.c"
+        pkg_re = re.compile(r'^"?([^@"]+)@')
+        ver_re = re.compile(r'^\s+version\s+"([^"]+)"')
+        current_pkg = None
+        for lineno, line in enumerate(lines, start=1):
+            m = pkg_re.match(line)
+            if m:
+                current_pkg = (m.group(1).strip(), lineno)
+            m_ver = ver_re.match(line)
+            if m_ver and current_pkg:
+                ver = m_ver.group(1)
+                vulns = VULN_DB.get(current_pkg[0].lower(), [])
+                for vuln in vulns:
+                    if _version_lte(ver, vuln["max_version"]):
+                        findings.append(Finding(
+                            file=filepath, line=current_pkg[1],
+                            severity=_SEVERITY_MAP.get(vuln["severity"], Severity.MEDIUM),
+                            title=f"Vulnerable Dependency — {current_pkg[0]} {ver} ({vuln['cve']})",
+                            description=vuln["desc"], code_snippet=f'{current_pkg[0]}@{ver}',
+                            cwe_id="CWE-1035", fix=vuln["fix"], scanner=self.name,
+                        ))
+                current_pkg = None
+        return findings
+
+    # ────────────────────────────────────────────────────── package-lock.json
+
+    def _scan_package_lock_json(self, filepath: str, content: str) -> list[Finding]:
+        findings = []
+        try:
+            data = json.loads(content)
+        except json.JSONDecodeError:
+            return findings
+        # lockfileVersion 2/3 uses "packages" key, v1 uses "dependencies"
+        pkgs = data.get("packages", data.get("dependencies", {}))
+        for key, info in pkgs.items():
+            pkg_name = key.split("node_modules/")[-1] if "node_modules/" in key else key
+            if not pkg_name:
+                continue
+            ver = info.get("version", "")
+            if not ver:
+                continue
+            vulns = VULN_DB.get(pkg_name.lower(), [])
+            for vuln in vulns:
+                if _version_lte(ver, vuln["max_version"]):
+                    findings.append(Finding(
+                        file=filepath, line=1,
+                        severity=_SEVERITY_MAP.get(vuln["severity"], Severity.MEDIUM),
+                        title=f"Vulnerable Dependency — {pkg_name} {ver} ({vuln['cve']})",
+                        description=vuln["desc"], code_snippet=f'{pkg_name}@{ver}',
+                        cwe_id="CWE-1035", fix=vuln["fix"], scanner=self.name,
                     ))
         return findings
