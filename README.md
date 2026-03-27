@@ -17,7 +17,7 @@
 
 ---
 
-## ⚡ Instant Installation
+##  Instant Installation
 
 You **do not** need to clone the repository to use VibeScan! Simply install it directly from your command prompt globally via PyPI.
 
@@ -31,7 +31,7 @@ Once installed, the `vibescan` command is instantly available in your terminal.
 
 ---
 
-## 🚀 Quick Start
+##  Quick Start
 
 Scan your current directory and output the results directly to the terminal:
 
@@ -47,28 +47,28 @@ vibescan scan /path/to/project --severity HIGH
 
 ---
 
-## 💎 Advanced Feature Suite (New in v2.1.0)
+##  Advanced Feature Suite (New in v2.1.0)
 
 VibeScan has evolved from a simple Python AST scanner into a comprehensive DevSecOps suite. Here is an in-depth look at what it can detect and do.
 
-### 1. 🔍 Comprehensive Vulnerability Detection (AST & Regex)
+### 1.  Comprehensive Vulnerability Detection (AST & Regex)
 - **Injection Attacks:** SQL Injection (string formatting/f-strings in queries), Command Injection (`subprocess(shell=True)`, `eval`, `exec`).
 - **Web Vulnerabilities:** Cross-Site Scripting (XSS) via `innerHTML`, `mark_safe`, React's `dangerouslySetInnerHTML`.
 - **Insecure Deserialization:** `pickle.load`, `yaml.load` (without SafeLoader), `marshal`.
 - **Cryptography:** Weak algorithms (MD5/SHA1, DES/RC4, ECB mode), weak RNG (`random` module for secrets), hardcoded IVs.
 - **Path Traversal:** Unsanitized user inputs in open/read functions.
 
-### 2. 🔑 Secrets Engine
+### 2.  Secrets Engine
 Scans over **80+ patterns** to catch hardcoded secrets before they are committed. Detects AWS Keys, Stripe Tokens, GitHub PATs, JWT Secrets, Private RSA Keys, Database Connection Strings, and Slack Webhooks.
 
-### 3. 🏗️ Infrastructure as Code (IaC) Scanning
+### 3.  Infrastructure as Code (IaC) Scanning
 Scans your deployment configurations for best-practice security violations:
 - **Dockerfiles:** Root user execution, `latest` tags, plaintext secrets in `ENV`, `curl \| sh`.
 - **Docker Compose:** Privileged containers, host networking, host PID namespaces.
 - **Terraform:** Open CIDRs (`0.0.0.0/0`), public S3 buckets, disabled TLS/encryption.
 - **Kubernetes:** Privileged pods, `runAsRoot`, PrivilegeEscalation, HostPath mounts.
 
-### 4. 📋 Software Composition Analysis (SCA) & Lockfiles
+### 4.  Software Composition Analysis (SCA) & Lockfiles
 VibeScan parses your dependency trees to identify known CVEs using the live OSV API and an offline embedded database. Supports:
 - `requirements.txt`
 - `package.json`
@@ -77,13 +77,13 @@ VibeScan parses your dependency trees to identify known CVEs using the live OSV 
 - `yarn.lock`
 - `package-lock.json`
 
-### 5. 🩹 Auto-Remediation Engine (`--fix`)
+### 5.  Auto-Remediation Engine (`--fix`)
 Don't just detect vulnerabilities – fix them. Running the scan with `--fix` generates exact before/after inline code diffs to patch the vulnerability instantly.
 ```bash
 vibescan scan . --fix
 ```
 
-### 6. 🛠️ Custom YAML Rule Engine
+### 6.  Custom YAML Rule Engine
 Define your company's proprietary security policies without writing Python code using `<root>/.vibescan-rules.yml`.
 ```yaml
 rules:
@@ -94,14 +94,14 @@ rules:
     fix: "Use the internal logging module."
 ```
 
-### 7. 💻 Official VS Code Extension
+### 7.  Official VS Code Extension
 VibeScan features a bundled VS Code extension (found in `/vscode-vibescan`). It provides:
 - **Red/Yellow squiggles** directly in your editor.
 - **Quick-Fix Lightbulbs** to instantly apply VibeScan patches.
 - **Status Bar Integration** counting live findings.
 - **Auto-Scan on Save**.
 
-### 8. 🌐 Interactive Web Dashboard
+### 8.  Interactive Web Dashboard
 Explore an interactive UI to triage alerts, visualize data, and manage false positives.
 
 ```bash
@@ -112,7 +112,7 @@ vibescan serve
 
 ---
 
-## 📊 Rich Reporting Formats
+##  Rich Reporting Formats
 
 VibeScan seamlessly integrates into any compliance workflow by exporting to multiple formats:
 
@@ -150,7 +150,7 @@ Fail builds automatically if Critical/High vulnerabilities are merged using `/ac
 
 ---
 
-## ⚙️ Configuration (`.vibescan.yml`)
+##  Configuration (`.vibescan.yml`)
 
 Tune the engine locally to reduce noise:
 
