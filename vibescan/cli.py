@@ -236,6 +236,330 @@ def cmd_list_plugins(args) -> int:
     return 0
 
 
+SNIPPETS = [
+    {
+        "id": "1a",
+        "title": "Discount Pricing (if-elif-else)",
+        "code": """a = int(input())
+
+if a < 1000:
+    f = a
+elif a < 5000:
+    f = a*0.9
+elif a < 10000:
+    f = a*0.8
+else:
+    f = a*0.75 - 500
+
+print(int(f))""",
+        "input": "12000",
+    },
+    {
+        "id": "1b",
+        "title": "Shopping Cart Discount",
+        "code": """n = int(input())
+t = 0
+
+for i in range(n):
+    p, d = map(int, input().split())
+    t += p - p*d/100
+
+if t > 1000:
+    t -= 150
+elif t > 500:
+    t -= t*0.10
+
+print(int(t))""",
+        "input": "2\n600 10\n500 20",
+    },
+    {
+        "id": "2a",
+        "title": "Sum Modulo M",
+        "code": """n,m = map(int,input().split())
+a = list(map(int,input().split()))
+
+s = 0
+for i in a:
+    s = (s+i)%m
+
+print(s)""",
+        "input": "5 7\n10 20 30 40 50",
+    },
+    {
+        "id": "2b",
+        "title": "Modular Exponentiation",
+        "code": """a,m,p = map(int,input().split())
+
+r = 1
+a %= p
+
+while m > 0:
+    if m%2:
+        r = (r*a)%p
+    a = (a*a)%p
+    m //= 2
+
+print(r)""",
+        "input": "2 5 13",
+    },
+    {
+        "id": "3a",
+        "title": "Sum of Modular Powers",
+        "code": """def f(a,m,p):
+ r=1
+ while m:
+  if m%2:r=r*a%p
+  a=a*a%p
+  m//=2
+ return r
+
+n,p=map(int,input().split())
+t=0
+
+for i in range(n):
+ a,m=map(int,input().split())
+ t=(t+f(a,m,p))%p
+
+print(t)""",
+        "input": "2 100\n2 5\n3 4",
+    },
+    {
+        "id": "3b",
+        "title": "Modular Product Divisibility",
+        "code": """a,b,p,k = map(int,input().split())
+
+m = (a*b)%p
+
+if m%k==0:
+    print(\"Divisible\")
+else:
+    print(\"Not Divisible\")""",
+        "input": "100000 200000 1000000 4",
+    },
+    {
+        "id": "4a",
+        "title": "nCr — Optimised",
+        "code": """n,k = map(int,input().split())
+
+r = 1
+k = min(k,n-k)
+
+for i in range(1,k+1):
+    r = r*(n-i+1)//i
+
+print(r)""",
+        "input": "5 2",
+    },
+    {
+        "id": "4b",
+        "title": "nCr — Factorial Method",
+        "code": """n,k = map(int,input().split())
+
+f = 1
+for i in range(1,n+1):
+    f *= i
+
+a = 1
+for i in range(1,k+1):
+    a *= i
+
+b = 1
+for i in range(1,n-k+1):
+    b *= i
+
+print(f//(a*b))""",
+        "input": "6 3",
+    },
+    {
+        "id": "5a",
+        "title": "Card Probability",
+        "code": """def c(n,r):
+ f=1
+ for i in range(r):
+  f=f*(n-i)//(i+1)
+ return f
+
+k,r=map(int,input().split())
+
+a=c(13,r)*c(39,k-r)
+b=c(52,k)
+
+print(round(a/b,6))""",
+        "input": "5 2",
+    },
+    {
+        "id": "5b",
+        "title": "Hypergeometric Probability",
+        "code": """def c(n,r):
+ t=1
+ for i in range(r):
+  t=t*(n-i)/(i+1)
+ return t
+
+n,d,k,r=map(int,input().split())
+
+print(f\"{c(d,r)*c(n-d,k-r)/c(n,k):.6f}\")""",
+        "input": "100 10 8 2",
+    },
+    {
+        "id": "6a",
+        "title": "XOR of Array",
+        "code": """n=int(input())
+a=map(int,input().split())
+
+x=0
+for i in a:
+ x^=i
+
+print(x)""",
+        "input": "5\n1 2 3 2 1",
+    },
+    {
+        "id": "6b",
+        "title": "XOR Checksum Anomaly Detector",
+        "code": """n=int(input())
+a=map(int,input().split())
+c=int(input())
+
+x=0
+for i in a:x^=i
+
+print(\"OK\" if x==c else \"ANOMALY\")""",
+        "input": "5\n12 5 7 12 5\n7",
+    },
+    {
+        "id": "7a",
+        "title": "Print Array Elements",
+        "code": """n=int(input())
+a=input().split()
+
+for i in a:
+ print(i,end=\" \")""",
+        "input": "5\n12 15 10 18 14",
+    },
+    {
+        "id": "7b",
+        "title": "Bubble Sort — 3rd Smallest",
+        "code": """n=int(input())
+a=list(map(int,input().split()))
+
+for i in range(n):
+ for j in range(i+1,n):
+  if a[i]>a[j]:
+   a[i],a[j]=a[j],a[i]
+
+print(a[2])""",
+        "input": "5\n12 15 10 18 14",
+    },
+    {
+        "id": "8a",
+        "title": "Sort & Print",
+        "code": """n=int(input())
+a=list(map(int,input().split()))
+
+a.sort()
+
+for i in a:
+ print(i,end=\" \")""",
+        "input": "6\n45 78 12 90 56 34",
+    },
+    {
+        "id": "8b",
+        "title": "Sort Tuples — Top 10",
+        "code": """n=int(input())
+a=[tuple(map(int,input().split())) for i in range(n)]
+
+a.sort()
+
+for i in a[:10]:
+ print(*i)""",
+        "input": "12\n120 101\n115 102\n130 103\n110 104\n118 105\n125 106\n112 107\n119 108\n117 109\n114 110\n116 111\n113 112",
+    },
+    {
+        "id": "9a",
+        "title": "Linear Search",
+        "code": """n=int(input())
+a=list(map(int,input().split()))
+x=int(input())
+
+if x in a:
+ print(a.index(x))
+else:
+ print(\"Not Found\")""",
+        "input": "6\n15 22 30 45 10 18\n45",
+    },
+    {
+        "id": "9b",
+        "title": "Access Control — Position Check",
+        "code": """n=int(input())
+a=list(map(int,input().split()))
+x,k=map(int,input().split())
+
+if x in a:
+ print(\"Valid Access\" if a.index(x)<k else \"Late Access\")
+else:
+ print(\"Access ID Not Found\")""",
+        "input": "8\n1012 2050 3091 4120 1503 5220 6101 7099\n3091 3",
+    },
+    {
+        "id": "10a",
+        "title": "Set Membership Check",
+        "code": """s={input() for i in range(int(input()))}
+
+for i in range(int(input())):
+ print(\"Found\" if input() in s else \"Not Found\")""",
+        "input": "5\napple\nbanana\ngrape\norange\nmango\n3\napple\npear\nmango",
+    },
+    {
+        "id": "10b",
+        "title": "Book Catalogue (Dictionary)",
+        "code": """b=dict(input().split() for i in range(int(input())))
+
+for i in range(int(input())):
+ q=input()
+ print(b[q] if q in b else \"Book Not Found\")""",
+        "input": "4\nDataStructures 101\nAlgorithms 102\nOperatingSystems 103\nDatabaseSystems 104\n3\nAlgorithms\nNetworks\nDatabaseSystems",
+    },
+]
+
+
+def cmd_snippets(args) -> int:
+    """Print all code snippets to the terminal."""
+    filter_id = args.filter.lower() if args.filter else None
+    sep = "=" * 65
+    thin = "-" * 65
+
+    matches = [
+        s for s in SNIPPETS
+        if filter_id is None or s["id"].lower() == filter_id
+    ]
+
+    if not matches:
+        print(f"{RED}No snippet found with id '{args.filter}'.{RESET}")
+        print(f"{DIM}Available ids: {', '.join(s['id'] for s in SNIPPETS)}{RESET}")
+        return 1
+
+    print(BANNER)
+    print(f"{BOLD}{CYAN}  VibeScan — Code Snippets  ({len(matches)} of {len(SNIPPETS)} shown){RESET}\n")
+
+    for snippet in matches:
+        print(f"{CYAN}{sep}{RESET}")
+        print(f"  {BOLD}{YELLOW}[{snippet['id']}]{RESET}  {BOLD}{snippet['title']}{RESET}")
+        print(f"{CYAN}{thin}{RESET}")
+        # Print code with line numbers
+        for lineno, line in enumerate(snippet["code"].splitlines(), 1):
+            print(f"  {GRAY}{lineno:>3} |{RESET}  {GREEN}{line}{RESET}")
+        print(f"{CYAN}{thin}{RESET}")
+        print(f"  {BOLD}Input:{RESET}")
+        for inp_line in snippet["input"].splitlines():
+            print(f"    {YELLOW}{inp_line}{RESET}")
+        print()
+
+    print(f"{CYAN}{sep}{RESET}")
+    print(f"  {DIM}Tip: use  vibescan snippets --filter 3a  to show a single snippet.{RESET}\n")
+    return 0
+
+
 def main():
     parser = argparse.ArgumentParser(
         prog="vibescan",
@@ -280,6 +604,11 @@ def main():
     lp = subparsers.add_parser("list-plugins", help="List discovered plugins in a directory")
     lp.add_argument("plugins_dir", help="Path to plugins directory")
 
+    # ── snippets ──────────────────────────────────────────────────────────────
+    snp = subparsers.add_parser("snippets", help="Display all built-in code snippets in the terminal")
+    snp.add_argument("--filter", "-f", default=None, metavar="ID",
+                     help="Show only the snippet with this id (e.g. 3a, 10b)")
+
     args = parser.parse_args()
 
     if args.command == "scan":
@@ -288,6 +617,8 @@ def main():
         sys.exit(cmd_serve(args))
     elif args.command == "list-plugins":
         sys.exit(cmd_list_plugins(args))
+    elif args.command == "snippets":
+        sys.exit(cmd_snippets(args))
     else:
         parser.print_help()
         sys.exit(0)
