@@ -119,6 +119,24 @@ print(r)
 input:
     2 5 13
 
+2ac.
+```python
+n,m=map(int,input().split())
+
+print(sum(map(int,input().split()))%m)
+```
+input:
+    (Add sample input here)
+
+2bc.
+```python
+a,m,p=map(int,input().split())
+
+print(pow(a,m,p))
+```
+input:
+    (Add sample input here)
+
 4a.
 ```python
 n,k = map(int,input().split())
@@ -155,6 +173,28 @@ print(f//(a*b))
 input:
     6 3
     
+4ac.
+```python
+from math import comb
+
+n,k=map(int,input().split())
+
+print(comb(n,k))
+```
+input:
+    (Add sample input here)
+
+4bc.
+```python
+from math import comb
+
+n,k=map(int,input().split())
+
+print(comb(n,k))
+```
+input:
+    (Add sample input here)
+
 3a.
 ```python
 def f(a,m,p):

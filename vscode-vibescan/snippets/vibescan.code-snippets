@@ -72,6 +72,26 @@
       "print(r)"
     ]
   },
+  "VibeScan 2ac - Sum Modulo M (Alternative)": {
+    "prefix": "vs2ac",
+    "description": "Sum Modulo M (Alternative)",
+    "scope": "python",
+    "body": [
+      "n,m=map(int,input().split())",
+      "",
+      "print(sum(map(int,input().split()))%m)"
+    ]
+  },
+  "VibeScan 2bc - Modular Exponentiation (Built-in)": {
+    "prefix": "vs2bc",
+    "description": "Modular Exponentiation (Built-in)",
+    "scope": "python",
+    "body": [
+      "a,m,p=map(int,input().split())",
+      "",
+      "print(pow(a,m,p))"
+    ]
+  },
   "VibeScan 3a - Sum of Modular Powers": {
     "prefix": "vs3a",
     "description": "Sum of Modular Powers",
@@ -146,6 +166,30 @@
       "    b *= i",
       "",
       "print(f//(a*b))"
+    ]
+  },
+  "VibeScan 4ac - nCr (Math Comb)": {
+    "prefix": "vs4ac",
+    "description": "nCr (Math Comb)",
+    "scope": "python",
+    "body": [
+      "from math import comb",
+      "",
+      "n,k=map(int,input().split())",
+      "",
+      "print(comb(n,k))"
+    ]
+  },
+  "VibeScan 4bc - nCr Factorial (Math Comb)": {
+    "prefix": "vs4bc",
+    "description": "nCr Factorial (Math Comb)",
+    "scope": "python",
+    "body": [
+      "from math import comb",
+      "",
+      "n,k=map(int,input().split())",
+      "",
+      "print(comb(n,k))"
     ]
   },
   "VibeScan 5a - Card Probability": {

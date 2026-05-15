@@ -303,6 +303,22 @@ print(r)""",
         "input": "2 5 13",
     },
     {
+        "id": "2ac",
+        "title": "Sum Modulo M (Alternative)",
+        "code": """n,m=map(int,input().split())
+
+print(sum(map(int,input().split()))%m)""",
+        "input": "2 5\n10 20",
+    },
+    {
+        "id": "2bc",
+        "title": "Modular Exponentiation (Built-in)",
+        "code": """a,m,p=map(int,input().split())
+
+print(pow(a,m,p))""",
+        "input": "2 5 13",
+    },
+    {
         "id": "3a",
         "title": "Sum of Modular Powers",
         "code": """def f(a,m,p):
@@ -368,6 +384,26 @@ for i in range(1,n-k+1):
     b *= i
 
 print(f//(a*b))""",
+        "input": "6 3",
+    },
+    {
+        "id": "4ac",
+        "title": "nCr (Math Comb)",
+        "code": """from math import comb
+
+n,k=map(int,input().split())
+
+print(comb(n,k))""",
+        "input": "5 2",
+    },
+    {
+        "id": "4bc",
+        "title": "nCr Factorial (Math Comb)",
+        "code": """from math import comb
+
+n,k=map(int,input().split())
+
+print(comb(n,k))""",
         "input": "6 3",
     },
     {
