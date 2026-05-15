@@ -353,6 +353,32 @@ else:
         "input": "100000 200000 1000000 4",
     },
     {
+        "id": "3ac",
+        "title": "Sum of Modular Powers (Built-in)",
+        "code": """n,p=map(int,input().split())
+t=0
+
+for i in range(n):
+ a,m=map(int,input().split())
+ t=(t+pow(a,m,p))%p
+
+print(t)""",
+        "input": "2 100\n2 5\n3 4",
+    },
+    {
+        "id": "3bc",
+        "title": "Modular Product Divisibility (Alternative)",
+        "code": """a,b,p,k = map(int,input().split())
+
+m = (a*b)%p
+
+if m%k==0:
+    print("Divisible")
+else:
+    print("Not Divisible")""",
+        "input": "100000 200000 1000000 4",
+    },
+    {
         "id": "4a",
         "title": "nCr — Optimised",
         "code": """n,k = map(int,input().split())

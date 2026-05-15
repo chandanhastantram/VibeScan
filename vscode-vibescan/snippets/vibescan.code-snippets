@@ -130,6 +130,36 @@
       "    print(\"Not Divisible\")"
     ]
   },
+  "VibeScan 3ac - Sum of Modular Powers (Built-in)": {
+    "prefix": "vs3ac",
+    "description": "Sum of Modular Powers (Built-in)",
+    "scope": "python",
+    "body": [
+      "n,p=map(int,input().split())",
+      "t=0",
+      "",
+      "for i in range(n):",
+      " a,m=map(int,input().split())",
+      " t=(t+pow(a,m,p))%p",
+      "",
+      "print(t)"
+    ]
+  },
+  "VibeScan 3bc - Modular Product Divisibility (Alternative)": {
+    "prefix": "vs3bc",
+    "description": "Modular Product Divisibility (Alternative)",
+    "scope": "python",
+    "body": [
+      "a,b,p,k = map(int,input().split())",
+      "",
+      "m = (a*b)%p",
+      "",
+      "if m%k==0:",
+      "    print(\"Divisible\")",
+      "else:",
+      "    print(\"Not Divisible\")"
+    ]
+  },
   "VibeScan 4a - nCr Optimised": {
     "prefix": "vs4a",
     "description": "nCr - Optimised",

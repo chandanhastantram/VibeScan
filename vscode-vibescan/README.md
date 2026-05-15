@@ -233,6 +233,34 @@ else:
 input:
     100000 200000 1000000 4
     
+3ac.
+```python
+n,p=map(int,input().split())
+t=0
+
+for i in range(n):
+ a,m=map(int,input().split())
+ t=(t+pow(a,m,p))%p
+
+print(t)
+```
+input:
+    (Add sample input here)
+
+3bc.
+```python
+a,b,p,k = map(int,input().split())
+
+m = (a*b)%p
+
+if m%k==0:
+    print("Divisible")
+else:
+    print("Not Divisible")
+```
+input:
+    (Add sample input here)
+
 5a.
 ```python
 def c(n,r):
