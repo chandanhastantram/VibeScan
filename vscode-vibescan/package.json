@@ -2,7 +2,7 @@
   "name": "vscode-vibescan",
   "displayName": "VibeScan Security Scanner",
   "description": "Real-time security vulnerability detection with inline diagnostics, quick-fixes, and status bar integration.",
-  "version": "1.0.1",
+  "version": "1.0.4",
   "publisher": "chandanhastantram",
   "repository": {
     "type": "git",
@@ -39,6 +39,14 @@
       {
         "command": "vibescan.clearDiagnostics",
         "title": "VibeScan: Clear All Diagnostics"
+      },
+      {
+        "command": "vibescan.showSnippets",
+        "title": "VibeScan: Show All Snippets"
+      },
+      {
+        "command": "vibescan.showSnippetById",
+        "title": "VibeScan: Show Snippet by ID"
       }
     ],
     "configuration": {
@@ -61,7 +69,13 @@
           "description": "Path to the Python interpreter"
         }
       }
-    }
+    },
+    "snippets": [
+      {
+        "language": "python",
+        "path": "./snippets/vibescan.code-snippets"
+      }
+    ]
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",

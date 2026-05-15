@@ -402,6 +402,26 @@ print(f\"{c(d,r)*c(n-d,k-r)/c(n,k):.6f}\")""",
         "input": "100 10 8 2",
     },
     {
+        "id": "5ac",
+        "title": "Card Probability (Math Comb)",
+        "code": """from math import comb
+
+k,r=map(int,input().split())
+
+print(round((comb(13,r)*comb(39,k-r))/comb(52,k),6))""",
+        "input": "5 2",
+    },
+    {
+        "id": "5bc",
+        "title": "Hypergeometric Probability (Math Comb)",
+        "code": """from math import comb
+
+n,d,k,r=map(int,input().split())
+
+print(f\"{comb(d,r)*comb(n-d,k-r)/comb(n,k):.6f}\")""",
+        "input": "100 10 8 2",
+    },
+    {
         "id": "6a",
         "title": "XOR of Array",
         "code": """n=int(input())
@@ -449,6 +469,16 @@ for i in range(n):
    a[i],a[j]=a[j],a[i]
 
 print(a[2])""",
+        "input": "5\n12 15 10 18 14",
+    },
+    {
+        "id": "7bc",
+        "title": "Print Array Elements (Alternative)",
+        "code": """n=int(input())
+a=input().split()
+
+for i in a:
+ print(i,end=\" \")""",
         "input": "5\n12 15 10 18 14",
     },
     {

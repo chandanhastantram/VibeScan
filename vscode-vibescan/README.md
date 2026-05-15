@@ -226,6 +226,28 @@ print(f"{c(d,r)*c(n-d,k-r)/c(n,k):.6f}")
 input:
     100 10 8 2
     
+5ac.
+```python
+from math import comb
+
+k,r=map(int,input().split())
+
+print(round((comb(13,r)*comb(39,k-r))/comb(52,k),6))
+```
+input:
+    (Add sample input here)
+
+5bc.
+```python
+from math import comb
+
+n,d,k,r=map(int,input().split())
+
+print(f"{comb(d,r)*comb(n-d,k-r)/comb(n,k):.6f}")
+```
+input:
+    (Add sample input here)
+    
 6a.
 ```python
 n=int(input())
@@ -284,6 +306,17 @@ print(a[2])
 input:
     5
 12 15 10 18 14
+
+7bc.
+```python
+n=int(input())
+a=input().split()
+
+for i in a:
+ print(i,end=" ")
+```
+input:
+    (Add sample input here)
 
 8a.
 ```python

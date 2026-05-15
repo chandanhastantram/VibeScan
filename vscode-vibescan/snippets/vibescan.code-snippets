@@ -1,0 +1,361 @@
+{
+  "VibeScan 1a - Discount Pricing": {
+    "prefix": "vs1a",
+    "description": "Discount Pricing (if-elif-else)",
+    "scope": "python",
+    "body": [
+      "a = int(input())",
+      "",
+      "if a < 1000:",
+      "    f = a",
+      "elif a < 5000:",
+      "    f = a*0.9",
+      "elif a < 10000:",
+      "    f = a*0.8",
+      "else:",
+      "    f = a*0.75 - 500",
+      "",
+      "print(int(f))"
+    ]
+  },
+  "VibeScan 1b - Shopping Cart Discount": {
+    "prefix": "vs1b",
+    "description": "Shopping Cart Discount",
+    "scope": "python",
+    "body": [
+      "n = int(input())",
+      "t = 0",
+      "",
+      "for i in range(n):",
+      "    p, d = map(int, input().split())",
+      "    t += p - p*d/100",
+      "",
+      "if t > 1000:",
+      "    t -= 150",
+      "elif t > 500:",
+      "    t -= t*0.10",
+      "",
+      "print(int(t))"
+    ]
+  },
+  "VibeScan 2a - Sum Modulo M": {
+    "prefix": "vs2a",
+    "description": "Sum Modulo M",
+    "scope": "python",
+    "body": [
+      "n,m = map(int,input().split())",
+      "a = list(map(int,input().split()))",
+      "",
+      "s = 0",
+      "for i in a:",
+      "    s = (s+i)%m",
+      "",
+      "print(s)"
+    ]
+  },
+  "VibeScan 2b - Modular Exponentiation": {
+    "prefix": "vs2b",
+    "description": "Modular Exponentiation",
+    "scope": "python",
+    "body": [
+      "a,m,p = map(int,input().split())",
+      "",
+      "r = 1",
+      "a %= p",
+      "",
+      "while m > 0:",
+      "    if m%2:",
+      "        r = (r*a)%p",
+      "    a = (a*a)%p",
+      "    m //= 2",
+      "",
+      "print(r)"
+    ]
+  },
+  "VibeScan 3a - Sum of Modular Powers": {
+    "prefix": "vs3a",
+    "description": "Sum of Modular Powers",
+    "scope": "python",
+    "body": [
+      "def f(a,m,p):",
+      " r=1",
+      " while m:",
+      "  if m%2:r=r*a%p",
+      "  a=a*a%p",
+      "  m//=2",
+      " return r",
+      "",
+      "n,p=map(int,input().split())",
+      "t=0",
+      "",
+      "for i in range(n):",
+      " a,m=map(int,input().split())",
+      " t=(t+f(a,m,p))%p",
+      "",
+      "print(t)"
+    ]
+  },
+  "VibeScan 3b - Modular Product Divisibility": {
+    "prefix": "vs3b",
+    "description": "Modular Product Divisibility",
+    "scope": "python",
+    "body": [
+      "a,b,p,k = map(int,input().split())",
+      "",
+      "m = (a*b)%p",
+      "",
+      "if m%k==0:",
+      "    print(\"Divisible\")",
+      "else:",
+      "    print(\"Not Divisible\")"
+    ]
+  },
+  "VibeScan 4a - nCr Optimised": {
+    "prefix": "vs4a",
+    "description": "nCr - Optimised",
+    "scope": "python",
+    "body": [
+      "n,k = map(int,input().split())",
+      "",
+      "r = 1",
+      "k = min(k,n-k)",
+      "",
+      "for i in range(1,k+1):",
+      "    r = r*(n-i+1)//i",
+      "",
+      "print(r)"
+    ]
+  },
+  "VibeScan 4b - nCr Factorial": {
+    "prefix": "vs4b",
+    "description": "nCr - Factorial Method",
+    "scope": "python",
+    "body": [
+      "n,k = map(int,input().split())",
+      "",
+      "f = 1",
+      "for i in range(1,n+1):",
+      "    f *= i",
+      "",
+      "a = 1",
+      "for i in range(1,k+1):",
+      "    a *= i",
+      "",
+      "b = 1",
+      "for i in range(1,n-k+1):",
+      "    b *= i",
+      "",
+      "print(f//(a*b))"
+    ]
+  },
+  "VibeScan 5a - Card Probability": {
+    "prefix": "vs5a",
+    "description": "Card Probability",
+    "scope": "python",
+    "body": [
+      "def c(n,r):",
+      " f=1",
+      " for i in range(r):",
+      "  f=f*(n-i)//(i+1)",
+      " return f",
+      "",
+      "k,r=map(int,input().split())",
+      "",
+      "a=c(13,r)*c(39,k-r)",
+      "b=c(52,k)",
+      "",
+      "print(round(a/b,6))"
+    ]
+  },
+  "VibeScan 5b - Hypergeometric Probability": {
+    "prefix": "vs5b",
+    "description": "Hypergeometric Probability",
+    "scope": "python",
+    "body": [
+      "def c(n,r):",
+      " t=1",
+      " for i in range(r):",
+      "  t=t*(n-i)/(i+1)",
+      " return t",
+      "",
+      "n,d,k,r=map(int,input().split())",
+      "",
+      "print(f\"{c(d,r)*c(n-d,k-r)/c(n,k):.6f}\")"
+    ]
+  },
+  "VibeScan 5ac - Card Probability (Math Comb)": {
+    "prefix": "vs5ac",
+    "description": "Card Probability (Math Comb)",
+    "scope": "python",
+    "body": [
+      "from math import comb",
+      "",
+      "k,r=map(int,input().split())",
+      "",
+      "print(round((comb(13,r)*comb(39,k-r))/comb(52,k),6))"
+    ]
+  },
+  "VibeScan 5bc - Hypergeometric Probability (Math Comb)": {
+    "prefix": "vs5bc",
+    "description": "Hypergeometric Probability (Math Comb)",
+    "scope": "python",
+    "body": [
+      "from math import comb",
+      "",
+      "n,d,k,r=map(int,input().split())",
+      "",
+      "print(f\"{comb(d,r)*comb(n-d,k-r)/comb(n,k):.6f}\")"
+    ]
+  },
+  "VibeScan 6a - XOR of Array": {
+    "prefix": "vs6a",
+    "description": "XOR of Array",
+    "scope": "python",
+    "body": [
+      "n=int(input())",
+      "a=map(int,input().split())",
+      "",
+      "x=0",
+      "for i in a:",
+      " x^=i",
+      "",
+      "print(x)"
+    ]
+  },
+  "VibeScan 6b - XOR Anomaly Detector": {
+    "prefix": "vs6b",
+    "description": "XOR Checksum Anomaly Detector",
+    "scope": "python",
+    "body": [
+      "n=int(input())",
+      "a=map(int,input().split())",
+      "c=int(input())",
+      "",
+      "x=0",
+      "for i in a:x^=i",
+      "",
+      "print(\"OK\" if x==c else \"ANOMALY\")"
+    ]
+  },
+  "VibeScan 7a - Print Array Elements": {
+    "prefix": "vs7a",
+    "description": "Print Array Elements",
+    "scope": "python",
+    "body": [
+      "n=int(input())",
+      "a=input().split()",
+      "",
+      "for i in a:",
+      " print(i,end=\" \")"
+    ]
+  },
+  "VibeScan 7b - Bubble Sort 3rd Smallest": {
+    "prefix": "vs7b",
+    "description": "Bubble Sort - 3rd Smallest",
+    "scope": "python",
+    "body": [
+      "n=int(input())",
+      "a=list(map(int,input().split()))",
+      "",
+      "for i in range(n):",
+      " for j in range(i+1,n):",
+      "  if a[i]>a[j]:",
+      "   a[i],a[j]=a[j],a[i]",
+      "",
+      "print(a[2])"
+    ]
+  },
+  "VibeScan 7bc - Print Array Elements (Alternative)": {
+    "prefix": "vs7bc",
+    "description": "Print Array Elements (Alternative)",
+    "scope": "python",
+    "body": [
+      "n=int(input())",
+      "a=input().split()",
+      "",
+      "for i in a:",
+      " print(i,end=\" \")"
+    ]
+  },
+  "VibeScan 8a - Sort and Print": {
+    "prefix": "vs8a",
+    "description": "Sort and Print",
+    "scope": "python",
+    "body": [
+      "n=int(input())",
+      "a=list(map(int,input().split()))",
+      "",
+      "a.sort()",
+      "",
+      "for i in a:",
+      " print(i,end=\" \")"
+    ]
+  },
+  "VibeScan 8b - Sort Tuples Top 10": {
+    "prefix": "vs8b",
+    "description": "Sort Tuples - Top 10",
+    "scope": "python",
+    "body": [
+      "n=int(input())",
+      "a=[tuple(map(int,input().split())) for i in range(n)]",
+      "",
+      "a.sort()",
+      "",
+      "for i in a[:10]:",
+      " print(*i)"
+    ]
+  },
+  "VibeScan 9a - Linear Search": {
+    "prefix": "vs9a",
+    "description": "Linear Search",
+    "scope": "python",
+    "body": [
+      "n=int(input())",
+      "a=list(map(int,input().split()))",
+      "x=int(input())",
+      "",
+      "if x in a:",
+      " print(a.index(x))",
+      "else:",
+      " print(\"Not Found\")"
+    ]
+  },
+  "VibeScan 9b - Access Control": {
+    "prefix": "vs9b",
+    "description": "Access Control - Position Check",
+    "scope": "python",
+    "body": [
+      "n=int(input())",
+      "a=list(map(int,input().split()))",
+      "x,k=map(int,input().split())",
+      "",
+      "if x in a:",
+      " print(\"Valid Access\" if a.index(x)<k else \"Late Access\")",
+      "else:",
+      " print(\"Access ID Not Found\")"
+    ]
+  },
+  "VibeScan 10a - Set Membership Check": {
+    "prefix": "vs10a",
+    "description": "Set Membership Check",
+    "scope": "python",
+    "body": [
+      "s={input() for i in range(int(input()))}",
+      "",
+      "for i in range(int(input())):",
+      " print(\"Found\" if input() in s else \"Not Found\")"
+    ]
+  },
+  "VibeScan 10b - Book Catalogue Dictionary": {
+    "prefix": "vs10b",
+    "description": "Book Catalogue (Dictionary)",
+    "scope": "python",
+    "body": [
+      "b=dict(input().split() for i in range(int(input())))",
+      "",
+      "for i in range(int(input())):",
+      " q=input()",
+      " print(b[q] if q in b else \"Book Not Found\")"
+    ]
+  }
+}
