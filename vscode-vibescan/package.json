@@ -2,8 +2,12 @@
   "name": "vscode-vibescan",
   "displayName": "VibeScan Security Scanner",
   "description": "Real-time security vulnerability detection with inline diagnostics, quick-fixes, and status bar integration.",
-  "version": "1.0.0",
-  "publisher": "vibescan",
+  "version": "1.0.1",
+  "publisher": "chandanhastantram",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/chandanhastantram/vibecodereviewer.git"
+  },
   "engines": {
     "vscode": "^1.80.0"
   },
